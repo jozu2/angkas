@@ -1,10 +1,3 @@
-import tw from "twrnc";
-import React, { useRef, useState } from "react";
-import MapView, { Marker } from "react-native-maps";
-import { selectOrigin, setOrigin } from "../redux/navSlice";
-import { useDispatch, useSelector } from "react-redux";
-import MapViewDirections from "react-native-maps-directions";
-import { GOOGLE_MAPS_APIKEY } from "@env";
 import {
   Pressable,
   StyleSheet,
@@ -12,16 +5,24 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import React, { useRef, useState } from "react";
+import MapView, { Marker } from "react-native-maps";
+import { GOOGLE_MAPS_APIKEY } from "@env";
+import { setOrigin } from "../redux/navSlice";
+import { useDispatch } from "react-redux";
+import { useNavigation } from "@react-navigation/native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { useNavigation } from "@react-navigation/native";
+import tw from "twrnc";
+import MapViewDirections from "react-native-maps-directions";
 import Geocoder from "react-native-geocoding";
+
 const BigMap = () => {
-  const origin = useSelector(selectOrigin);
   const dispatch = useDispatch();
   const navigation = useNavigation();
   Geocoder.init(GOOGLE_MAPS_APIKEY);
 
+  //Resets the states in this component after pressing "ASK FOR A RIDE"
   const resetOriginDescriptionModalNavigate = () => {
     navigation.navigate("Searching");
     setTimeout(() => {
@@ -29,11 +30,13 @@ const BigMap = () => {
       setOriginDescription({ description: "" });
       setShowDirection({ check: false, boxModalConfirm: false });
       if (googlePlaceAutoCompleteRef.current?.getAddressText()) {
-        googlePlaceAutoCompleteRef.current.setAddressText(""); // Clear input field
+        googlePlaceAutoCompleteRef.current.setAddressText("");
       }
-    }, 1000); // Change the delay time (in milliseconds) as needed
+    }, 1000);
   };
-
+  //MAP DATA
+  const mapRef = useRef(null);
+  const googlePlaceAutoCompleteRef = useRef(null);
   const [originCoord, setOriginCoord] = useState({
     latitude: 14.9977785,
     longitude: 120.6559842,
@@ -45,6 +48,8 @@ const BigMap = () => {
     check: false,
     boxModalConfirm: false,
   });
+
+  //School Data for MARKER
   const schoolDestination = {
     location: {
       longitude: 120.6559842,
@@ -52,18 +57,11 @@ const BigMap = () => {
     },
     description: "Don Honorio Ventura State University, Bacolor, Pampanga",
   };
-  const mapRef = useRef(null);
 
-  const googlePlaceAutoCompleteRef = useRef(null);
   return (
     <>
-      <View
-        style={{
-          position: "absolute",
-          width: "100%",
-          top: "10%",
-        }}
-      >
+      {/* Google auto complete Input field */}
+      <View style={styles.apContainer}>
         {showDirection.boxModalConfirm === false && (
           <GooglePlacesAutocomplete
             renderRightButton={() =>
@@ -107,6 +105,7 @@ const BigMap = () => {
         )}
       </View>
 
+      {/* /////////THE MAP SHOWN IN FULL SCREEN////////// */}
       <MapView
         showsMyLocationButton={true}
         showsUserLocation={true}
@@ -119,6 +118,7 @@ const BigMap = () => {
           longitudeDelta: 0.015,
         }}
       >
+        {/* //////////////// MAP DIRECTIONS //////////////*/}
         {originCoord.latitude !== 14.9977785 && showDirection.check && (
           <MapViewDirections
             origin={{
@@ -138,6 +138,8 @@ const BigMap = () => {
             }}
           />
         )}
+
+        {/* //// Origin Marker Location && get the coord address (draggable) /////*/}
         {originCoord.latitude !== 14.9977785 && (
           <Marker
             draggable
@@ -180,6 +182,7 @@ const BigMap = () => {
           />
         )}
 
+        {/* ///////// Destination Marker(SCHOOL LOCATION)  /////////*/}
         <Marker
           style={{ width: 200, height: 200 }}
           coordinate={schoolDestination.location}
@@ -190,6 +193,7 @@ const BigMap = () => {
         ></Marker>
       </MapView>
 
+      {/* // CHECK ICON, this will show after placing your origin marker ////*/}
       {originDescription.description !== "" &&
         showDirection.check === false && (
           <Pressable
@@ -213,16 +217,9 @@ const BigMap = () => {
           </Pressable>
         )}
 
+      {/* ///////// MODAL. contains the ORIGIN AND DESTINATION address(will show after pressing the CHECK ICON)/////////*/}
       {showDirection.boxModalConfirm === true && (
-        <View
-          style={{
-            position: "absolute",
-            width: 200,
-            alignSelf: "center",
-            bottom: "5%",
-            width: "95%",
-          }}
-        >
+        <View style={styles.modalContainerOriginTODes}>
           <View
             style={[
               tw`rounded-xl t.bgGray400`,
@@ -235,12 +232,6 @@ const BigMap = () => {
               },
             ]}
           >
-            {/* <Text style={styles.textOriginDest}>
-              Origin: {originDescription.description}
-            </Text>
-            <Text style={styles.textOriginDest}>
-              Origin: {originDescription.description}
-            </Text> */}
             <View style={styles.ModalText}>
               <View>
                 <Text style={{ fontSize: 11, color: "#1a202c" }}>
@@ -264,6 +255,9 @@ const BigMap = () => {
                 </Text>
               </View>
             </View>
+
+            {/* //BUTTON will send the origin data to the REQUEST db in FIrebase///// */}
+            {/* WIP */}
             <Pressable
               style={[
                 tw`rounded-xl`,
@@ -288,6 +282,18 @@ const BigMap = () => {
 
 export default BigMap;
 const styles = StyleSheet.create({
+  modalContainerOriginTODes: {
+    position: "absolute",
+    width: 200,
+    alignSelf: "center",
+    bottom: "5%",
+    width: "95%",
+  },
+  apContainer: {
+    position: "absolute",
+    width: "100%",
+    top: "10%",
+  },
   container: {
     height: "100%",
   },
