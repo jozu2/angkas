@@ -1,35 +1,54 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import React from "react";
-import tw from "twrnc";
 import { useNavigation } from "@react-navigation/native";
-import { useDispatch } from "react-redux";
-import InputTextAutoComplete from "../../component/InputTextAutoComplete";
+import tw from "twrnc";
+import React from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
 const UserHomepage = () => {
-  const dispatch = useDispatch();
   const navigation = useNavigation();
   return (
-    <>
-      <View style={tw`h-1/2 pt-10`}>
+    <SafeAreaView>
+      <View style={[tw`h-1/2 pt-10`, { backgroundColor: "orange" }]}>
         <Pressable
+          style={{
+            alignSelf: "center",
+            justifyContent: "center",
+            marginTop: 200,
+            backgroundColor: "white",
+            padding: 15,
+            width: "60%",
+            borderRadius: 10,
+          }}
           onPress={() => {
-            navigation.navigate("OriginToSchoolMap");
+            navigation.navigate("UserGotoScoolMap");
           }}
         >
-          <Text>Go to School</Text>
-        </Pressable>
-        <InputTextAutoComplete />
-        <Pressable onPress={() => navigation.navigate("OriginToSchoolMap")}>
-          <Text style={{ marginTop: 100 }}>BOOK NOW!</Text>
+          <Text style={{ alignSelf: "center", fontSize: 20 }}>
+            Go to School
+          </Text>
         </Pressable>
       </View>
 
-      {/* if the user home is null = will prompt a msg to add the home location */}
-      <View style={tw`h-1/2`}>
-        <Pressable onPress={() => navigation.navigate("map")}>
-          <Text>Going Home</Text>
+      <View style={[tw`h-1/2`, { backgroundColor: "white" }]}>
+        <Pressable
+          style={{
+            alignSelf: "center",
+            justifyContent: "center",
+            marginTop: 200,
+            backgroundColor: "red",
+            padding: 15,
+            width: "60%",
+            borderRadius: 10,
+          }}
+          onPress={() => {
+            navigation.navigate("UserGotoHomeMap");
+          }}
+        >
+          <Text style={{ alignSelf: "center", color: "white", fontSize: 20 }}>
+            Go Home
+          </Text>
         </Pressable>
       </View>
-    </>
+    </SafeAreaView>
   );
 };
 

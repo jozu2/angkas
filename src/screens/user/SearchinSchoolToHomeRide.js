@@ -5,16 +5,16 @@ import * as Animatable from "react-native-animatable";
 import { useNavigation } from "@react-navigation/native";
 import { useBackHandler } from "@react-native-community/hooks";
 import { useDispatch } from "react-redux";
-import { setOrigin } from "../../redux/navSlice";
+import { setHomeDestination } from "../../redux/navSlice";
 
-const Searching = () => {
+const SearchinSchoolToHomeRide = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
   //RESETS THE STORED ORIGIN LOCATION IF USER PRESS CANCEL
   const handleNavigateAndResetOrigin = () => {
-    dispatch(setOrigin(null));
-    navigation.navigate("UserGotoScoolMap");
+    dispatch(setHomeDestination(null));
+    navigation.navigate("UserGotoHomeMap");
   };
   function backActionHandler() {
     Alert.alert("", "Are you sure you want to Cancel?", [
@@ -69,7 +69,7 @@ const Searching = () => {
   );
 };
 
-export default Searching;
+export default SearchinSchoolToHomeRide;
 
 const styles = StyleSheet.create({
   SearchContainer: {

@@ -3,10 +3,10 @@ import { Provider } from "react-redux";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import UserHomepage from "./src/screens/user/UserHomepage";
-import GoToSchool from "./src/screens/user/GoToSchool";
-import OriginToSchoolMap from "./src/screens/user/OriginToSchoolMap";
 import Searching from "./src/screens/user/Searching";
-import BigMap from "./src/component/BigMap";
+import UserGotoScoolMap from "./src/screens/user/UserGotoScoolMap";
+import UserGotoHomeMap from "./src/screens/user/UserGotoHomeMap";
+import SearchinSchoolToHomeRide from "./src/screens/user/SearchinSchoolToHomeRide";
 
 export default function App() {
   const Stack = createStackNavigator();
@@ -16,15 +16,27 @@ export default function App() {
         <NavigationContainer>
           <Stack.Navigator screenOptions={{ headerShown: false }}>
             <Stack.Group>
-              {/* <Stack.Screen name="UserHomepage" component={UserHomepage} /> */}
+              <Stack.Screen name="UserHomepage" component={UserHomepage} />
               {/* <Stack.Screen
                 name="OriginToSchoolMap"
                 component={OriginToSchoolMap}
               /> */}
-              <Stack.Screen name="big" component={BigMap} />
+              <Stack.Screen
+                name="UserGotoScoolMap"
+                component={UserGotoScoolMap}
+              />
+              <Stack.Screen
+                name="UserGotoHomeMap"
+                component={UserGotoHomeMap}
+              />
               <Stack.Screen
                 name="Searching"
                 component={Searching}
+                options={{ presentation: "fullScreenModal" }}
+              />
+              <Stack.Screen
+                name="SearchinSchoolToHomeRide"
+                component={SearchinSchoolToHomeRide}
                 options={{ presentation: "fullScreenModal" }}
               />
             </Stack.Group>

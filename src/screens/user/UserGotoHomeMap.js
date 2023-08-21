@@ -8,26 +8,26 @@ import {
 import React, { useRef, useState } from "react";
 import MapView, { Marker } from "react-native-maps";
 import { GOOGLE_MAPS_APIKEY } from "@env";
-import { setOrigin } from "../redux/navSlice";
+import { setHomeDestination } from "../../redux/navSlice";
 import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+import { useBackHandler } from "@react-native-community/hooks";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import tw from "twrnc";
 import MapViewDirections from "react-native-maps-directions";
 import Geocoder from "react-native-geocoding";
 
-const BigMap = () => {
+const UserGotoHomeMap = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   Geocoder.init(GOOGLE_MAPS_APIKEY);
 
   //Resets the states in this component after pressing "ASK FOR A RIDE"
   const resetOriginDescriptionModalNavigate = () => {
-    navigation.navigate("Searching");
     setTimeout(() => {
-      setOriginCoord({ latitude: 14.9977785, longitude: 120.6559842 });
-      setOriginDescription({ description: "" });
+      setHomeCoord({ latitude: 14.9977785, longitude: 120.6559842 });
+      setHomeDescription({ description: "" });
       setShowDirection({ check: false, boxModalConfirm: false });
       if (googlePlaceAutoCompleteRef.current?.getAddressText()) {
         googlePlaceAutoCompleteRef.current.setAddressText("");
@@ -37,11 +37,11 @@ const BigMap = () => {
   //MAP DATA
   const mapRef = useRef(null);
   const googlePlaceAutoCompleteRef = useRef(null);
-  const [originCoord, setOriginCoord] = useState({
+  const [homeCoord, setHomeCoord] = useState({
     latitude: 14.9977785,
     longitude: 120.6559842,
   });
-  const [originDescription, setOriginDescription] = useState({
+  const [homeDescription, setHomeDescription] = useState({
     description: "",
   });
   const [showDirection, setShowDirection] = useState({
@@ -50,13 +50,23 @@ const BigMap = () => {
   });
 
   //School Data for MARKER
-  const schoolDestination = {
+  const school = {
     location: {
       longitude: 120.6559842,
       latitude: 14.9977785,
     },
     description: "Don Honorio Ventura State University, Bacolor, Pampanga",
   };
+
+  // Resets data when user go backs
+
+  function backActionHandler() {
+    resetOriginDescriptionModalNavigate();
+    navigation.navigate("UserHomepage");
+
+    return true;
+  }
+  useBackHandler(backActionHandler);
 
   return (
     <>
@@ -87,17 +97,17 @@ const BigMap = () => {
               key: GOOGLE_MAPS_APIKEY,
               language: "en",
             }}
-            placeholder="Where From?"
+            placeholder="Where to?"
             nearbyPlacesAPI="GooglePlacesSearch"
             debounce={400}
             minLength={2}
             enablePoweredByContainer={false}
             onPress={(data, details = null) => {
-              setOriginCoord({
+              setHomeCoord({
                 latitude: details.geometry.location.lat,
                 longitude: details.geometry.location.lng,
               });
-              setOriginDescription({ description: data.description });
+              setHomeDescription({ description: data.description });
             }}
             fetchDetails={true}
             returnKeyType={"search"}
@@ -112,21 +122,21 @@ const BigMap = () => {
         ref={mapRef}
         style={tw`flex-1`}
         region={{
-          latitude: originCoord.latitude,
-          longitude: originCoord.longitude,
+          latitude: homeCoord.latitude,
+          longitude: homeCoord.longitude,
           latitudeDelta: 0.015,
           longitudeDelta: 0.015,
         }}
       >
         {/* //////////////// MAP DIRECTIONS //////////////*/}
-        {originCoord.latitude !== 14.9977785 && showDirection.check && (
+        {homeCoord.latitude !== 14.9977785 && showDirection.check && (
           <MapViewDirections
             origin={{
-              latitude: originCoord.latitude,
-              longitude: originCoord.longitude,
+              latitude: homeCoord.latitude,
+              longitude: homeCoord.longitude,
             }}
-            destination={schoolDestination.description}
-            identifier="origin"
+            destination={school.description}
+            identifier="destination"
             apikey={GOOGLE_MAPS_APIKEY}
             strokeWidth={4}
             strokeColor="green"
@@ -140,19 +150,20 @@ const BigMap = () => {
         )}
 
         {/* //// Origin Marker Location && get the coord address (draggable) /////*/}
-        {originCoord.latitude !== 14.9977785 && (
+        {homeCoord.latitude !== 14.9977785 && (
           <Marker
             draggable
             coordinate={{
-              latitude: originCoord.latitude,
-              longitude: originCoord.longitude,
+              latitude: homeCoord.latitude,
+              longitude: homeCoord.longitude,
             }}
-            title="You"
-            description={originDescription.description}
-            identifier="origin"
+            title="Drag me"
+            description={homeDescription.description}
+            identifier="destination"
+            isPreselected={true}
             onDragEnd={async (e) => {
               const newCoordinate = e.nativeEvent.coordinate;
-              setOriginCoord(newCoordinate);
+              setHomeCoord(newCoordinate);
 
               try {
                 const response = await Geocoder.from(
@@ -174,7 +185,7 @@ const BigMap = () => {
                   .map((component) => component.long_name)
                   .join(", ");
 
-                setOriginDescription({ description: formattedAddress });
+                setHomeDescription({ description: formattedAddress });
               } catch (error) {
                 console.error("Error Fetching Address", error);
               }
@@ -185,44 +196,42 @@ const BigMap = () => {
         {/* ///////// Destination Marker(SCHOOL LOCATION)  /////////*/}
         <Marker
           style={{ width: 200, height: 200 }}
-          coordinate={schoolDestination.location}
+          coordinate={school.location}
           title="School"
-          description={schoolDestination.description}
-          identifier="destination"
-          icon={require("../assets/imgSchool.png")}
+          description={school.description}
+          identifier="origin"
         ></Marker>
       </MapView>
 
       {/* // CHECK ICON, this will show after placing your origin marker ////*/}
-      {originDescription.description !== "" &&
-        showDirection.check === false && (
-          <Pressable
-            style={styles.checkContainer}
-            onPress={() => {
-              dispatch(
-                setOrigin({
-                  location: originCoord,
-                  description: originDescription.description,
-                })
-              );
-              setShowDirection({ check: true, boxModalConfirm: true });
-            }}
-          >
-            <Ionicons
-              name="md-checkmark-circle"
-              size={32}
-              color="orange"
-              style={styles.iconCheck}
-            />
-          </Pressable>
-        )}
+      {homeDescription.description !== "" && showDirection.check === false && (
+        <Pressable
+          style={styles.checkContainer}
+          onPress={() => {
+            dispatch(
+              setHomeDestination({
+                location: homeCoord,
+                description: homeDescription.description,
+              })
+            );
+            setShowDirection({ check: true, boxModalConfirm: true });
+          }}
+        >
+          <Ionicons
+            name="md-checkmark-circle"
+            size={32}
+            color="orange"
+            style={styles.iconCheck}
+          />
+        </Pressable>
+      )}
 
       {/* ///////// MODAL. contains the ORIGIN AND DESTINATION address(will show after pressing the CHECK ICON)/////////*/}
       {showDirection.boxModalConfirm === true && (
         <View style={styles.modalContainerOriginTODes}>
           <View
             style={[
-              tw`rounded-xl t.bgGray400`,
+              tw`rounded-xl `,
               {
                 backgroundColor: "#ecc94b",
                 paddingTop: 35,
@@ -240,7 +249,7 @@ const BigMap = () => {
               </View>
               <View>
                 <Text style={{ fontSize: 16, color: "#1a202c" }}>
-                  {originDescription.description}
+                  {school.description}
                 </Text>
               </View>
 
@@ -251,7 +260,7 @@ const BigMap = () => {
               </View>
               <View>
                 <Text style={{ fontSize: 16, color: "#1a202c" }}>
-                  {schoolDestination.description}
+                  {homeDescription.description}
                 </Text>
               </View>
             </View>
@@ -267,7 +276,10 @@ const BigMap = () => {
                   marginTop: 20,
                 },
               ]}
-              onPress={resetOriginDescriptionModalNavigate}
+              onPress={() => {
+                resetOriginDescriptionModalNavigate;
+                navigation.navigate("SearchinSchoolToHomeRide");
+              }}
             >
               <Text style={{ textAlign: "center", fontSize: 20 }}>
                 Ask For a Ride
@@ -280,7 +292,7 @@ const BigMap = () => {
   );
 };
 
-export default BigMap;
+export default UserGotoHomeMap;
 const styles = StyleSheet.create({
   modalContainerOriginTODes: {
     position: "absolute",
