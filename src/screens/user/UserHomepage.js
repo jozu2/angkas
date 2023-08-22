@@ -1,13 +1,22 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import tw from "twrnc";
 import React from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
+import Ionicons from "react-native-vector-icons/Ionicons";
+
 const UserHomepage = () => {
   const navigation = useNavigation();
   return (
     <SafeAreaView>
       <View style={[tw`h-1/2 pt-10`, { backgroundColor: "orange" }]}>
+        <Ionicons
+          onPress={() => navigation.openDrawer()}
+          name="menu-outline"
+          size={52}
+          color="white"
+          style={styles.hamburger}
+        />
         <Pressable
           style={{
             alignSelf: "center",
@@ -54,4 +63,10 @@ const UserHomepage = () => {
 
 export default UserHomepage;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  hamburger: {
+    position: "absolute",
+    left: "3%",
+    top: "3%",
+  },
+});
