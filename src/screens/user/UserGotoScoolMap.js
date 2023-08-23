@@ -59,13 +59,10 @@ const UserGotoScoolMap = () => {
   };
 
   // Resets data when user go backs
-  const handleNavigateAndResetOrigin = () => {
-    dispatch(setOrigin(null));
-    navigation.navigate("big");
-  };
+
   function backActionHandler() {
     resetOriginDescriptionModalNavigate();
-    navigation.navigate("UserHomepage");
+    navigation.navigate("Home");
 
     return true;
   }

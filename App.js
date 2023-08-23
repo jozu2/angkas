@@ -1,12 +1,17 @@
 import { store } from "./src/redux/store";
 import { Provider } from "react-redux";
 import { NavigationContainer } from "@react-navigation/native";
+<<<<<<< Updated upstream
 import { createStackNavigator } from "@react-navigation/stack";
 import UserHomepage from "./src/screens/user/UserHomepage";
 import Searching from "./src/screens/user/Searching";
 import UserGotoScoolMap from "./src/screens/user/UserGotoScoolMap";
 import UserGotoHomeMap from "./src/screens/user/UserGotoHomeMap";
 import SearchinSchoolToHomeRide from "./src/screens/user/SearchinSchoolToHomeRide";
+=======
+
+import UserNavigation from "./src/navigations/user";
+>>>>>>> Stashed changes
 
 export default function App() {
   const Stack = createStackNavigator();
