@@ -8,7 +8,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 const UserHomepage = () => {
   const navigation = useNavigation();
   return (
-    <SafeAreaView>
+    <>
       <View style={[tw`h-1/2 pt-10`, { backgroundColor: "orange" }]}>
         <Ionicons
           onPress={() => navigation.openDrawer()}
@@ -57,7 +57,7 @@ const UserHomepage = () => {
           </Text>
         </Pressable>
       </View>
-    </SafeAreaView>
+    </>
   );
 };
 
@@ -67,6 +67,6 @@ const styles = StyleSheet.create({
   hamburger: {
     position: "absolute",
     left: "3%",
-    top: "3%",
+    top: "12%",
   },
 });

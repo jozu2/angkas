@@ -65,7 +65,7 @@ const UserGotoScoolMap = () => {
   };
   function backActionHandler() {
     resetOriginDescriptionModalNavigate();
-    navigation.navigate("UserHomepage");
+    navigation.navigate("Home");
 
     return true;
   }
