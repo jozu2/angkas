@@ -7,7 +7,10 @@ const Driver = () => {
   const Stack = createStackNavigator();
 
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator
+      screenOptions={{ headerShown: false }}
+      initialRouteName="DriverMain"
+    >
       <Stack.Screen name="DriverMain" component={DriverDrawer} />
     </Stack.Navigator>
   );

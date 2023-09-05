@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import UserHomepage from "../screens/user/UserHomepage";
 
@@ -9,18 +9,13 @@ import UserGotoScoolMap from "../screens/user/UserGotoScoolMap";
 import UserGotoHomeMap from "../screens/user/UserGotoHomeMap";
 import SearchinSchoolToHomeRide from "../screens/user/SearchinSchoolToHomeRide";
 import SideMenu from "./sideMenu";
-import AuthNavigator from "./AuthNavigator";
-import Driver from "./driver";
 
 const UserNavigation = () => {
   const Stack = createStackNavigator();
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {/* Include AuthNavigator as a screen */}
-      <Stack.Screen name="Auth" component={AuthNavigator} />
       <Stack.Screen name="drawer" component={SideMenu} />
-      <Stack.Screen name="DriverDashboard" component={Driver} />
 
       <Stack.Screen name="UserGotoScoolMap" component={UserGotoScoolMap} />
       <Stack.Screen name="UserGotoHomeMap" component={UserGotoHomeMap} />

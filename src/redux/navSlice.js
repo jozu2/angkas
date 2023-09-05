@@ -25,6 +25,11 @@ export const navSlice = createSlice({
     setGoingHomeTraveltime: (state, action) => {
       state.goingHomeTraveltime = action.payload;
     },
+
+    //UserIsLogin
+    setUserIsLoggedin: (state, action) => {
+      state.userIsLoggedIn = action.payload;
+    },
   },
 });
 
@@ -34,6 +39,7 @@ export const {
   setTravelTimeInformation,
   setHomeDestination,
   setGoingHomeTraveltime,
+  setUserIsLoggedin,
 } = navSlice.actions;
 
 //Selectors go to school user
@@ -45,5 +51,7 @@ export const selectTravelTimeInformation = (state) =>
 export const selectHomeDestination = (state) => state.nav.homeDestination;
 export const SelectGoingHomeTraveltime = (state) =>
   state.nav.goingHomeTraveltime;
+
+export const selectUserIsLoggedIn = (state) => state.nav.userIsLoggedIn;
 
 export default navSlice.reducer;

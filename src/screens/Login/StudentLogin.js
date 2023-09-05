@@ -3,11 +3,14 @@ import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { firebase } from "./../../../config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { selectUserIsLoggedIn, setUserIsLoggedin } from "../../redux/navSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 const StudentLogin = () => {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     // Check if the user is already authenticated
@@ -42,8 +45,7 @@ const StudentLogin = () => {
           .get();
 
         if (userDoc.exists) {
-          navigation.navigate("drawer");
-
+          dispatch(setUserIsLoggedin("student"));
           await AsyncStorage.setItem("user", JSON.stringify(user));
         } else {
           alert("Please log in your Student Account");

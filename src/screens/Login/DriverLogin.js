@@ -3,11 +3,14 @@ import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { firebase } from "./../../../config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useDispatch } from "react-redux";
+import { setUserIsLoggedin } from "../../redux/navSlice";
 
 const DriverLogin = () => {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     // Check if the user is already authenticated
@@ -16,10 +19,9 @@ const DriverLogin = () => {
 
   const checkUserAuthentication = async () => {
     try {
-      const user = await AsyncStorage.getItem("drivers");
-      if (user) {
-        // User is already authenticated, navigate to the dashboard
-        navigation.navigate("DriverDashboard");
+      const driver = await AsyncStorage.getItem("driver");
+      if (driver) {
+        navigation.navigate("DriverMain");
       }
     } catch (error) {
       console.error("Error checking user authentication:", error);
@@ -41,9 +43,9 @@ const DriverLogin = () => {
           .get();
 
         if (userDocs.exists) {
-          navigation.navigate("DriverDashboard");
+          dispatch(setUserIsLoggedin("driver"));
 
-          await AsyncStorage.setItem("drivers", JSON.stringify(user));
+          await AsyncStorage.setItem("driver", JSON.stringify(user));
         } else {
           alert("Please log in your Driver Account");
         }

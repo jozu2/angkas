@@ -7,18 +7,19 @@ import UserChat from "../screens/user/UserChat";
 import UserSettings from "../screens/user/UserSettings";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
+import { useDispatch } from "react-redux";
+import { setUserIsLoggedin } from "../redux/navSlice";
 
 const SideMenu = () => {
   const Drawer = createDrawerNavigator();
   const navigation = useNavigation();
-
+  const dispatch = useDispatch();
   const handleLogout = async () => {
     try {
-      // Clear user data from AsyncStorage
+      dispatch(setUserIsLoggedin(""));
       await AsyncStorage.removeItem("drivers");
       await AsyncStorage.removeItem("user");
 
-      // Navigate to the authentication screens (e.g., HomeLogin)
       navigation.navigate("HomeLogin"); // Change to the appropriate login screen
     } catch (error) {
       console.error("Error logging out:", error);

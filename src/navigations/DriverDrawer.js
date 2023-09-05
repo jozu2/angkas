@@ -7,14 +7,18 @@ import DriverProfile from "../screens/driver/DriverProfile";
 import DriverChat from "../screens/driver/DriverChat";
 import DriverSettings from "../screens/driver/DriverSettings";
 import { useNavigation } from "@react-navigation/native";
+import { useDispatch } from "react-redux";
+import { setUserIsLoggedin } from "../redux/navSlice";
 
 const DriverDrawer = () => {
   const Drawer = createDrawerNavigator();
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   const handleLogout = async () => {
     try {
-      await AsyncStorage.removeItem("drivers");
+      dispatch(setUserIsLoggedin(""));
+      await AsyncStorage.removeItem("driver");
       await AsyncStorage.removeItem("user");
       navigation.navigate("HomeLogin");
     } catch (error) {
