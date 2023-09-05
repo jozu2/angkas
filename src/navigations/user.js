@@ -9,29 +9,33 @@ import UserGotoScoolMap from "../screens/user/UserGotoScoolMap";
 import UserGotoHomeMap from "../screens/user/UserGotoHomeMap";
 import SearchinSchoolToHomeRide from "../screens/user/SearchinSchoolToHomeRide";
 import SideMenu from "./sideMenu";
+import AuthNavigator from "./AuthNavigator";
 
 const UserNavigation = () => {
   const Stack = createStackNavigator();
 
   return (
-    <>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="drawer" component={SideMenu} />
+    <Stack.Navigator
+      screenOptions={{ headerShown: false }}
+      initialRouteName="Home"
+    >
+      {/* Include AuthNavigator as a screen */}
+      <Stack.Screen name="Auth" component={AuthNavigator} />
+      <Stack.Screen name="drawer" component={SideMenu} />
 
-        <Stack.Screen name="UserGotoScoolMap" component={UserGotoScoolMap} />
-        <Stack.Screen name="UserGotoHomeMap" component={UserGotoHomeMap} />
-        <Stack.Screen
-          name="Searching"
-          component={Searching}
-          options={{ presentation: "fullScreenModal" }}
-        />
-        <Stack.Screen
-          name="SearchinSchoolToHomeRide"
-          component={SearchinSchoolToHomeRide}
-          options={{ presentation: "fullScreenModal" }}
-        />
-      </Stack.Navigator>
-    </>
+      <Stack.Screen name="UserGotoScoolMap" component={UserGotoScoolMap} />
+      <Stack.Screen name="UserGotoHomeMap" component={UserGotoHomeMap} />
+      <Stack.Screen
+        name="Searching"
+        component={Searching}
+        options={{ presentation: "fullScreenModal" }}
+      />
+      <Stack.Screen
+        name="SearchinSchoolToHomeRide"
+        component={SearchinSchoolToHomeRide}
+        options={{ presentation: "fullScreenModal" }}
+      />
+    </Stack.Navigator>
   );
 };
 

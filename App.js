@@ -3,9 +3,8 @@ import { store } from "./src/redux/store";
 import { Provider } from "react-redux";
 import { NavigationContainer } from "@react-navigation/native";
 
+import AuthNavigator from "./src/navigations/AuthNavigator";
 import UserNavigation from "./src/navigations/user";
-import SideMenu from "./src/navigations/sideMenu";
-import MainNavUser from "./src/navigations/MainNavUser";
 
 export default function App() {
   return (
