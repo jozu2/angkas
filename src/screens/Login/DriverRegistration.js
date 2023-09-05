@@ -9,17 +9,9 @@ const DriverRegistration = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [studentId, setStudentId] = useState("");
-  const [isStudent, setIsStudent] = useState(false);
   const navigation = useNavigation();
 
-  resgisterDriver = async (
-    email,
-    password,
-    firstName,
-    lastName,
-    studentId,
-    isStudent
-  ) => {
+  resgisterDriver = async (email, password, firstName, lastName, studentId) => {
     await firebase
       .auth()
       .createUserWithEmailAndPassword(email, password)
@@ -39,14 +31,13 @@ const DriverRegistration = () => {
           .then(() => {
             firebase
               .firestore()
-              .collection("users")
+              .collection("drivers")
               .doc(firebase.auth().currentUser.uid)
               .set({
                 firstName,
                 lastName,
                 email,
                 studentId,
-                isStudent,
               });
           })
           .catch((err) => {
@@ -124,14 +115,7 @@ const DriverRegistration = () => {
       <Pressable
         style={styles.button}
         onPress={() =>
-          resgisterDriver(
-            email,
-            password,
-            firstName,
-            lastName,
-            studentId,
-            isStudent
-          )
+          resgisterDriver(email, password, firstName, lastName, studentId)
         }
       >
         <Text>SIGN UP</Text>

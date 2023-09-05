@@ -1,18 +1,66 @@
 import { View, Text, Pressable, TextInput, StyleSheet } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { firebase } from "./../../../config";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const DriverLogin = () => {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const navigation = useNavigation();
 
-  loginUser = async (email, password) => {
+  useEffect(() => {
+    // Check if the user is already authenticated
+    checkUserAuthentication();
+  }, []);
+
+  const checkUserAuthentication = async () => {
     try {
-      await firebase.auth().signInWithEmailAndPassword(email, password);
+      const user = await AsyncStorage.getItem("drivers");
+      if (user) {
+        // User is already authenticated, navigate to the dashboard
+        navigation.navigate("DriverDashboard");
+      }
     } catch (error) {
-      alert(error.message);
+      console.error("Error checking user authentication:", error);
+    }
+  };
+
+  const loginDriver = async (email, password) => {
+    try {
+      const userCredential = await firebase
+        .auth()
+        .signInWithEmailAndPassword(email, password);
+      const user = userCredential.user;
+
+      if (user.emailVerified) {
+        const userDocs = await firebase
+          .firestore()
+          .collection("drivers")
+          .doc(user.uid)
+          .get();
+
+        if (userDocs.exists) {
+          navigation.navigate("DriverDashboard");
+
+          await AsyncStorage.setItem("drivers", JSON.stringify(user));
+        } else {
+          alert("Please log in your Driver Account");
+        }
+      } else {
+        // Email is not verified, display an error message
+        firebase.auth().currentUser.sendEmailVerification({
+          handleCodeInApp: true,
+          url: "https://angkas-9b800.firebaseapp.com",
+        });
+
+        alert("Please verify your email before proceeding.");
+        await firebase.auth().signOut();
+        // You can also sign out the user at this point if desired
+        // await firebase.auth().signOut();
+      }
+    } catch {
+      alert("Invalid Email/Password");
     }
   };
 
@@ -44,7 +92,7 @@ const DriverLogin = () => {
 
       <Pressable
         style={styles.button}
-        onPress={() => loginUser(email, password)}
+        onPress={() => loginDriver(email, password)}
         disabled={!email || !password}
       >
         <Text>Sign In</Text>

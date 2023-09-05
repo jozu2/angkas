@@ -1,25 +1,22 @@
 import { StyleSheet, Text, View, Button } from "react-native";
 import React from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
-import UserHomepage from "../screens/user/UserHomepage";
-import UserProfile from "../screens/user/UserProfile";
-import UserChat from "../screens/user/UserChat";
-import UserSettings from "../screens/user/UserSettings";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import DriverMain from "../screens/driver/DriverMain";
+import DriverProfile from "../screens/driver/DriverProfile";
+import DriverChat from "../screens/driver/DriverChat";
+import DriverSettings from "../screens/driver/DriverSettings";
 import { useNavigation } from "@react-navigation/native";
 
-const SideMenu = () => {
+const DriverDrawer = () => {
   const Drawer = createDrawerNavigator();
   const navigation = useNavigation();
 
   const handleLogout = async () => {
     try {
-      // Clear user data from AsyncStorage
       await AsyncStorage.removeItem("drivers");
       await AsyncStorage.removeItem("user");
-
-      // Navigate to the authentication screens (e.g., HomeLogin)
-      navigation.navigate("HomeLogin"); // Change to the appropriate login screen
+      navigation.navigate("HomeLogin");
     } catch (error) {
       console.error("Error logging out:", error);
     }
@@ -29,10 +26,10 @@ const SideMenu = () => {
     <View style={styles.container}>
       {/* Your drawer menu items */}
       <Drawer.Navigator screenOptions={{ headerShown: false }}>
-        <Drawer.Screen name="Home" component={UserHomepage} />
-        <Drawer.Screen name="Profile" component={UserProfile} />
-        <Drawer.Screen name="Chat" component={UserChat} />
-        <Drawer.Screen name="Settings" component={UserSettings} />
+        <Drawer.Screen name="Homes" component={DriverMain} />
+        <Drawer.Screen name="Profiles" component={DriverProfile} />
+        <Drawer.Screen name="Chats" component={DriverChat} />
+        <Drawer.Screen name="Settingss" component={DriverSettings} />
       </Drawer.Navigator>
 
       {/* Add a Logout button */}
@@ -41,7 +38,7 @@ const SideMenu = () => {
   );
 };
 
-export default SideMenu;
+export default DriverDrawer;
 const styles = StyleSheet.create({
   container: {
     flex: 1,

@@ -9,7 +9,6 @@ const StudentRegistration = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [studentId, setStudentId] = useState("");
-  const [isStudent, setIsStudent] = useState(true);
   const navigation = useNavigation();
 
   const validateEmail = (email) => {
@@ -28,8 +27,7 @@ const StudentRegistration = () => {
     password,
     firstName,
     lastName,
-    studentId,
-    isStudent
+    studentId
   ) => {
     if (!validateEmail(email)) {
       return;
@@ -51,7 +49,6 @@ const StudentRegistration = () => {
           lastName,
           email,
           studentId,
-          isStudent,
         });
 
       await firebase.auth().signOut();
@@ -129,14 +126,7 @@ const StudentRegistration = () => {
       <Pressable
         style={styles.button}
         onPress={() =>
-          registerUser(
-            email,
-            password,
-            firstName,
-            lastName,
-            studentId,
-            isStudent
-          )
+          registerUser(email, password, firstName, lastName, studentId)
         }
       >
         <Text>SIGN UP</Text>

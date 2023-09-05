@@ -1,14 +1,32 @@
 import { View, Text, Pressable, TextInput, StyleSheet } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { firebase } from "./../../../config";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const StudentLogin = () => {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const navigation = useNavigation();
 
-  loginUser = async (email, password) => {
+  useEffect(() => {
+    // Check if the user is already authenticated
+    checkUserAuthentication();
+  }, []);
+
+  const checkUserAuthentication = async () => {
+    try {
+      const user = await AsyncStorage.getItem("user");
+      if (user) {
+        // User is already authenticated, navigate to the dashboard
+        navigation.navigate("drawer");
+      }
+    } catch (error) {
+      console.error("Error checking user authentication:", error);
+    }
+  };
+
+  const loginUser = async (email, password) => {
     try {
       const userCredential = await firebase
         .auth()
@@ -16,11 +34,23 @@ const StudentLogin = () => {
       const user = userCredential.user;
 
       if (user.emailVerified) {
-        // Email is verified, proceed to the user dashboard
-        navigation.navigate("drawer");
+        // Fetch the user's data from Firestore
+        const userDoc = await firebase
+          .firestore()
+          .collection("users")
+          .doc(user.uid)
+          .get();
+
+        if (userDoc.exists) {
+          navigation.navigate("drawer");
+
+          await AsyncStorage.setItem("user", JSON.stringify(user));
+        } else {
+          alert("Please log in your Student Account");
+        }
+        // Email is verified, save user data and navigate to the dashboard
       } else {
         // Email is not verified, display an error message
-
         firebase.auth().currentUser.sendEmailVerification({
           handleCodeInApp: true,
           url: "https://angkas-9b800.firebaseapp.com",

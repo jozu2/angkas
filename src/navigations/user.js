@@ -10,18 +10,17 @@ import UserGotoHomeMap from "../screens/user/UserGotoHomeMap";
 import SearchinSchoolToHomeRide from "../screens/user/SearchinSchoolToHomeRide";
 import SideMenu from "./sideMenu";
 import AuthNavigator from "./AuthNavigator";
+import Driver from "./driver";
 
 const UserNavigation = () => {
   const Stack = createStackNavigator();
 
   return (
-    <Stack.Navigator
-      screenOptions={{ headerShown: false }}
-      initialRouteName="Home"
-    >
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       {/* Include AuthNavigator as a screen */}
       <Stack.Screen name="Auth" component={AuthNavigator} />
       <Stack.Screen name="drawer" component={SideMenu} />
+      <Stack.Screen name="DriverDashboard" component={Driver} />
 
       <Stack.Screen name="UserGotoScoolMap" component={UserGotoScoolMap} />
       <Stack.Screen name="UserGotoHomeMap" component={UserGotoHomeMap} />

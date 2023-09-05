@@ -8,8 +8,8 @@ import {
 import React, { useRef, useState } from "react";
 import MapView, { Marker } from "react-native-maps";
 import { GOOGLE_MAPS_APIKEY } from "@env";
-import { setOrigin } from "../../redux/navSlice";
-import { useDispatch } from "react-redux";
+import { selectOrigin, setOrigin } from "../../redux/navSlice";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { useBackHandler } from "@react-native-community/hooks";
@@ -17,6 +17,8 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import tw from "twrnc";
 import MapViewDirections from "react-native-maps-directions";
 import Geocoder from "react-native-geocoding";
+import { ref, set } from "firebase/database";
+import { db } from "./../../../config";
 
 const UserGotoScoolMap = () => {
   const dispatch = useDispatch();
@@ -34,6 +36,19 @@ const UserGotoScoolMap = () => {
       }
     }, 1000);
   };
+
+  const origin = useSelector(selectOrigin);
+  ////////////////////////////////////////////////////////
+
+  const RequestGoToSchool = () => {
+    set(ref(db, "Request_To_School/"), {
+      coordinates: origin.location,
+      location: origin.description,
+    });
+    resetOriginDescriptionModalNavigate();
+    navigation.navigate("Searching");
+  };
+
   //MAP DATA
   const mapRef = useRef(null);
   const googlePlaceAutoCompleteRef = useRef(null);
@@ -280,10 +295,7 @@ const UserGotoScoolMap = () => {
                   marginTop: 20,
                 },
               ]}
-              onPress={() => {
-                resetOriginDescriptionModalNavigate;
-                navigation.navigate("Searching");
-              }}
+              onPress={RequestGoToSchool}
             >
               <Text style={{ textAlign: "center", fontSize: 20 }}>
                 Ask For a Ride
