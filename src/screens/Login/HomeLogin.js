@@ -1,30 +1,30 @@
-import { View, Text, StyleSheet, Pressable } from 'react-native'
-import React from 'react'
-import { useNavigation } from '@react-navigation/native'
+import { View, Text, StyleSheet, Pressable } from "react-native";
+import React from "react";
+import { useNavigation } from "@react-navigation/native";
 
 const HomeLogin = () => {
-  const navigation = useNavigation()
+  const navigation = useNavigation();
+
   return (
     <View style={styles.container}>
-
-      <Pressable style={styles.button}
-                 onPress={() => navigation.navigate('StudentLogin')}>             
-        <Text>Student</Text> 
+      <Pressable
+        style={styles.button}
+        onPress={() => navigation.navigate("StudentLogin")}
+      >
+        <Text>Student</Text>
       </Pressable>
 
-
-      <Pressable style={styles.button}
-                  onPress={() => navigation.navigate('DriverLogin')}> 
+      <Pressable
+        style={styles.button}
+        onPress={() => navigation.navigate("DriverLogin")}
+      >
         <Text>Driver</Text>
       </Pressable>
-
     </View>
-  )
-}
+  );
+};
 
-export default HomeLogin
-
-
+export default HomeLogin;
 
 const styles = StyleSheet.create({
   container: {

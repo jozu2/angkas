@@ -30,6 +30,21 @@ export const navSlice = createSlice({
     setUserIsLoggedin: (state, action) => {
       state.userIsLoggedIn = action.payload;
     },
+
+    //isLoading
+    setIsLoading: (state, action) => {
+      state.isLoading = action.payload;
+    },
+
+    //User.Uid
+    setUserId: (state, action) => {
+      state.userId = action.payload;
+    },
+
+    //DriverLocation
+    setDriverLocation: (state, action) => {
+      state.driverLocation = action.payload;
+    },
   },
 });
 
@@ -40,6 +55,9 @@ export const {
   setHomeDestination,
   setGoingHomeTraveltime,
   setUserIsLoggedin,
+  setIsLoading,
+  setUserId,
+  setDriverLocation,
 } = navSlice.actions;
 
 //Selectors go to school user
@@ -53,5 +71,11 @@ export const SelectGoingHomeTraveltime = (state) =>
   state.nav.goingHomeTraveltime;
 
 export const selectUserIsLoggedIn = (state) => state.nav.userIsLoggedIn;
+
+export const selectIsLoading = (state) => state.nav.isLoading;
+
+export const selectUserId = (state) => state.nav.userId;
+
+export const selectDriverLocation = (state) => state.nav.driverLocation;
 
 export default navSlice.reducer;

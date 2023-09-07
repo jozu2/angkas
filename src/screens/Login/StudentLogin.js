@@ -35,6 +35,7 @@ const StudentLogin = () => {
         .auth()
         .signInWithEmailAndPassword(email, password);
       const user = userCredential.user;
+      const uid = user.uid;
 
       if (user.emailVerified) {
         // Fetch the user's data from Firestore
@@ -43,9 +44,11 @@ const StudentLogin = () => {
           .collection("users")
           .doc(user.uid)
           .get();
-
+        console.log(`User UID: ${uid}`);
         if (userDoc.exists) {
           dispatch(setUserIsLoggedin("student"));
+          dispatch(setUser("student"));
+
           await AsyncStorage.setItem("user", JSON.stringify(user));
         } else {
           alert("Please log in your Student Account");

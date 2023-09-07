@@ -5,10 +5,15 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import MapView, { Marker } from "react-native-maps";
 import { GOOGLE_MAPS_APIKEY } from "@env";
-import { selectOrigin, setOrigin } from "../../redux/navSlice";
+import {
+  selectOrigin,
+  selectUserId,
+  setOrigin,
+  setUserIsLoggedin,
+} from "../../redux/navSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
@@ -19,6 +24,7 @@ import MapViewDirections from "react-native-maps-directions";
 import Geocoder from "react-native-geocoding";
 import { ref, set } from "firebase/database";
 import { db } from "./../../../config";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const UserGotoScoolMap = () => {
   const dispatch = useDispatch();
@@ -39,11 +45,37 @@ const UserGotoScoolMap = () => {
 
   const origin = useSelector(selectOrigin);
   ////////////////////////////////////////////////////////
+  const [UID, setUID] = useState(useSelector(selectUserId));
+  useEffect(() => {
+    checkForUID();
+  }, []);
+
+  const checkForUID = async () => {
+    try {
+      const user = await AsyncStorage.getItem("user");
+
+      if (user) {
+        const userData = JSON.parse(user);
+        const userUID = userData.uid;
+
+        setUID(userUID);
+        // You might want to set userLoggedIn status in Redux based on your needs.
+        dispatch(setUserIsLoggedin("student"));
+      } else if (driver) {
+        // Handle the driver case in a similar manner if needed.
+      }
+    } catch (error) {
+      console.error("Error checking user authentication:", error);
+    }
+  };
 
   const RequestGoToSchool = () => {
-    set(ref(db, "Request_To_School/"), {
-      coordinates: origin.location,
-      location: origin.description,
+    set(ref(db, "Request_To_School/" + UID), {
+      coordinates: {
+        latitude: origin.location.latitude,
+        longitude: origin.location.longitude,
+        location: origin.description,
+      },
     });
     resetOriginDescriptionModalNavigate();
     navigation.navigate("Searching");

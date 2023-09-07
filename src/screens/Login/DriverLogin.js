@@ -41,7 +41,7 @@ const DriverLogin = () => {
           .collection("drivers")
           .doc(user.uid)
           .get();
-
+        console.log(userDocs);
         if (userDocs.exists) {
           dispatch(setUserIsLoggedin("driver"));
 

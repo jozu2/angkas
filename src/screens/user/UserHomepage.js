@@ -1,6 +1,5 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import tw from "twrnc";
 import React from "react";
 import Ionicons from "react-native-vector-icons/Ionicons";
