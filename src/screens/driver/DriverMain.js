@@ -34,8 +34,10 @@ const DriverMain = () => {
       setLocation(location);
     })();
   }, []);
-
-  dispatch(setDriverLocation(location));
+  useEffect(() => {
+    // Move the dispatch inside a useEffect to avoid the error
+    dispatch(setDriverLocation(location));
+  }, [location, dispatch]);
   return (
     <>
       <View style={[tw`h-1/2 pt-10`, { backgroundColor: "violet" }]}>

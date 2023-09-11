@@ -1,0 +1,25 @@
+export default [
+  {
+    id: 1,
+    img: require("../assets/bgSchool2.png"),
+    imgTwo: require("../assets/bgSchool3.png"),
+    img3: require("../assets/bgSchool4.png"),
+    img4: require("../assets/bgSchool4.png"),
+    description: "Go To School",
+    uri: "UserGotoScoolMap",
+    color: "#8cc9d8",
+  },
+  {
+    id: 2,
+    img: require("../assets/bgSchool2.png"),
+    imgTwo: require("../assets/bgSchool3.png"),
+    img3: require("../assets/bgSchool3.png"),
+    img4: require("../assets/bgSchool4.png"),
+    // imgTwo: require("../assets/bgHome2.png"),
+    // img3: require("../assets/bgHome3.png"),
+    // img4: require("../assets/bgHome4.png"),
+    description: "Go Home",
+    uri: "UserGotoHomeMap",
+    color: "#f9a800",
+  },
+];

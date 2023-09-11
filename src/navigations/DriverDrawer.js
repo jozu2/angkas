@@ -37,7 +37,7 @@ const DriverDrawer = () => {
       </Drawer.Navigator>
 
       {/* Add a Logout button */}
-      <Button title="Logout" onPress={handleLogout} />
+      {/* <Button title="Logout" onPress={handleLogout} /> */}
     </View>
   );
 };
