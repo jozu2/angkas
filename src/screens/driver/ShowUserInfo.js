@@ -14,13 +14,15 @@ import { GOOGLE_MAPS_APIKEY } from "@env";
 import { Pressable } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
+import { db } from "../../../config";
+import { ref, onValue, set, update } from "firebase/database";
+
 const ShowUserInfo = () => {
   const StudentDetails = useSelector(selectHomeDestination);
   const DriverDetails = useSelector(selectDriverLocation);
   const mapRef = useRef(null);
   const navigation = useNavigation();
 
-  console.log(DriverDetails);
   return (
     <SafeAreaView style={styles.ContainerMain}>
       <View style={{ position: "absolute", top: "7%", width: "100%" }}>
@@ -163,6 +165,23 @@ const ShowUserInfo = () => {
               backgroundColor: "#95D3BF",
               display: "flex",
               justifyContent: "center",
+            }}
+            onPress={async () => {
+              try {
+                // Create an object with the updated isAccepted field
+                const updates = {};
+                updates[
+                  "Request_To_School/" + `${StudentDetails.id}/` + "isAccepted/"
+                ] = true;
+
+                // Update the database with the new value
+                await update(ref(db), updates);
+
+                // Navigate to the next screen
+                navigation.navigate("DriverScanUserGoingSchool");
+              } catch (error) {
+                console.error("Error updating isAccepted:", error);
+              }
             }}
           >
             <Text style={{ alignSelf: "center", fontSize: 18, color: "white" }}>

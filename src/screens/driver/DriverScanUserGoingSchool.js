@@ -39,23 +39,30 @@ const DriverScanUserGoingSchool = () => {
   //     });
   //   }, [])
   // );
-
   useEffect(() => {
     const dbRef = ref(db, "Request_To_School");
     onValue(dbRef, (snapshot) => {
       const data = snapshot.val();
-      const newRequest = Object.keys(data).map((key) => ({
+      const requests = Object.keys(data).map((key) => ({
         id: key,
         ...data[key],
       }));
 
-      const randomIndex = Math.floor(Math.random() * newRequest.length);
-      const randomRequest = newRequest[randomIndex];
+      // Filter requests where isAccepted is false
+      const filteredRequests = requests.filter(
+        (request) => request.isAccepted === false
+      );
 
-      setRequestDataToSchool(randomRequest);
-      dispatch(setHomeDestination(randomRequest));
-      setIsDataFetched(true);
-      setIsLoading(false);
+      if (filteredRequests.length > 0) {
+        // Randomly select one of the filtered requests
+        const randomIndex = Math.floor(Math.random() * filteredRequests.length);
+        const randomRequest = filteredRequests[randomIndex];
+
+        setRequestDataToSchool(randomRequest);
+        dispatch(setHomeDestination(randomRequest));
+        setIsDataFetched(true);
+        setIsLoading(false);
+      }
     });
   }, []);
 
