@@ -23,7 +23,7 @@ const Pagination = ({ data, scrollX, index }) => {
 
         const backgroundColor = scrollX.interpolate({
           inputRange,
-          outputRange: ["#171717", "#dedede", "#171717"],
+          outputRange: ["#FF416C", "#dedede", "#2F80ED"],
           extrapolate: "clamp",
         });
 

@@ -95,7 +95,7 @@ const UserHomepage = () => {
         onPress={() => navigation.openDrawer()}
         name="menu-outline"
         size={52}
-        color="black"
+        color="white"
         style={styles.hamburger}
       />
       <View style={styles.container}>

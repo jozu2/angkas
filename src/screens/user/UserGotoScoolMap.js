@@ -77,6 +77,7 @@ const UserGotoScoolMap = () => {
         location: origin.description,
       },
       isAccepted: false,
+      isBeingReviewed: false,
     });
     resetOriginDescriptionModalNavigate();
     navigation.navigate("Searching");

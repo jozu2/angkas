@@ -23,7 +23,7 @@ const SlideItem = ({ item }) => {
   const translateYImage4 = new Animated.Value(-50);
   const translateYImage5 = new Animated.Value(30);
   const translateYImagebird = new Animated.Value(-80);
-  const translateYImageplane = new Animated.Value(230);
+  const translateYImageplane = new Animated.Value(100);
 
   const navigation = useNavigation();
 
@@ -269,10 +269,9 @@ const styles = StyleSheet.create({
   description: {
     fontWeight: "bold",
     fontSize: 25,
-
     padding: 15,
     alignSelf: "center",
-    color: "#333",
+    color: "#edeceb",
     paddingHorizontal: 40,
     zIndex: 100,
   },
@@ -280,12 +279,12 @@ const styles = StyleSheet.create({
     position: "absolute",
     borderWidth: 2,
     borderRadius: 30,
-    borderTopColor: "white",
+    borderTopColor: "#e6e6e6",
     borderRightColor: "#ababab",
     alignSelf: "center",
   },
   buttonTopMargin: {
-    top: "35%",
+    top: "42%",
     zIndex: 800,
   },
 });

@@ -12,10 +12,11 @@ import MapViewDirections from "react-native-maps-directions";
 import MapView, { Marker } from "react-native-maps";
 import { GOOGLE_MAPS_APIKEY } from "@env";
 import { Pressable } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useEffect } from "react";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 import { db } from "../../../config";
-import { ref, onValue, set, update } from "firebase/database";
+import { ref, onValue, set, update, get } from "firebase/database";
 
 const ShowUserInfo = () => {
   const StudentDetails = useSelector(selectHomeDestination);
@@ -23,6 +24,51 @@ const ShowUserInfo = () => {
   const mapRef = useRef(null);
   const navigation = useNavigation();
 
+  const handleAceept = async () => {
+    try {
+      // Reference to the student's isAccepted field
+      const studentIsBeingViewedRef = ref(
+        db,
+        `Request_To_School/${StudentDetails.id}/isBeingViewed`
+      );
+
+      // Get the current value of isAccepted
+      const snapshot = await get(studentIsBeingViewedRef);
+      const currentIsAccepted = snapshot.val();
+
+      // Check if the student is already accepted
+      if (currentIsAccepted) {
+        // Student is already accepted, show an alert
+        alert("This user is already accepted by others.");
+        navigation.navigate("DriverScanUserGoingSchool");
+      } else {
+        // Student is not accepted, set isAccepted to true
+        await set(studentIsBeingViewedRef, true);
+
+        // Navigate to the next screen
+        navigation.navigate("DriverScanUserGoingSchool");
+      }
+    } catch (error) {
+      console.error("Error updating isAccepted:", error);
+    }
+
+    console.log("hey");
+  };
+  const route = useRoute();
+
+  const { onReject } = route.params || {}; // Retrieve the callback from route params
+
+  const handleReject = () => {
+    navigation.navigate("DriverScanUserGoingSchool", {
+      onReject: () => {},
+    });
+  };
+  useEffect(() => {
+    if (onReject) {
+      // Execute the callback when the route changes
+      onReject();
+    }
+  }, [route]);
   return (
     <SafeAreaView style={styles.ContainerMain}>
       <View style={{ position: "absolute", top: "7%", width: "100%" }}>
@@ -149,9 +195,7 @@ const ShowUserInfo = () => {
               display: "flex",
               justifyContent: "center",
             }}
-            onPress={() => {
-              navigation.navigate("DriverScanUserGoingSchool"); // Go back to the previous screen
-            }}
+            onPress={handleReject}
           >
             <Text style={{ alignSelf: "center", fontSize: 18, color: "white" }}>
               REJECT
@@ -166,23 +210,7 @@ const ShowUserInfo = () => {
               display: "flex",
               justifyContent: "center",
             }}
-            onPress={async () => {
-              try {
-                // Create an object with the updated isAccepted field
-                const updates = {};
-                updates[
-                  "Request_To_School/" + `${StudentDetails.id}/` + "isAccepted/"
-                ] = true;
-
-                // Update the database with the new value
-                await update(ref(db), updates);
-
-                // Navigate to the next screen
-                navigation.navigate("DriverScanUserGoingSchool");
-              } catch (error) {
-                console.error("Error updating isAccepted:", error);
-              }
-            }}
+            // onPress={handleAceept}
           >
             <Text style={{ alignSelf: "center", fontSize: 18, color: "white" }}>
               ACCEPT

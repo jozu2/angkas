@@ -2,12 +2,16 @@ import { View, Text, StyleSheet, Image, Pressable } from "react-native";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import * as Animatable from "react-native-animatable";
+import { LinearGradient } from "expo-linear-gradient";
 
 const HomeLogin = () => {
   const navigation = useNavigation();
 
   return (
-    <View style={styles.Main}>
+    <LinearGradient
+      colors={["#2F80ED", "#2F80ED", "#FF4B2B", "#FF416C"]}
+      style={styles.Main}
+    >
       <View style={styles.containerone}>
         <Animatable.View
           animation="fadeInDown"
@@ -40,35 +44,60 @@ const HomeLogin = () => {
       >
         <Animatable.View
           animation={"slideInUp"}
-          duration={1900}
-          delay={100}
+          duration={1200}
           iterationCount={1}
         >
           <Text style={styles.h1}>Login As</Text>
-          <Pressable
-            style={[styles.button, { marginTop: "5%" }]}
-            onPress={() => navigation.navigate("StudentLogin")}
-          >
-            <Text style={styles.buttonText}>RIDER</Text>
-          </Pressable>
 
-          <Pressable
-            style={[styles.button, { backgroundColor: "#9c3932" }]}
-            onPress={() => navigation.navigate("DriverLogin")}
+          <LinearGradient
+            style={[styles.buttonBlueContainer]}
+            colors={["#FF4B2B", "#FF416C"]}
           >
-            <Text style={styles.buttonTexttwo}>DRIVER</Text>
-          </Pressable>
+            <Pressable
+              style={[styles.buttonBlue]}
+              onPress={() => navigation.navigate("StudentLogin")}
+            >
+              <Text style={styles.buttonText}>RIDER</Text>
+            </Pressable>
+          </LinearGradient>
+
+          <LinearGradient
+            style={[styles.buttonBlueContainerTwo]}
+            colors={["#56CCF2", "#2F80ED"]}
+          >
+            <Pressable onPress={() => navigation.navigate("DriverLogin")}>
+              <Text style={styles.buttonTexttwo}>DRIVER</Text>
+            </Pressable>
+          </LinearGradient>
         </Animatable.View>
       </Animatable.View>
-    </View>
+    </LinearGradient>
   );
 };
 
 export default HomeLogin;
 
 const styles = StyleSheet.create({
+  buttonBlueContainerTwo: {
+    width: "80%",
+    marginTop: "5%",
+    borderRadius: 12,
+    borderWidth: 2,
+    borderTopColor: "#e6e6e6",
+    borderRightColor: "#ababab",
+    alignSelf: "center",
+  },
+  buttonBlueContainer: {
+    width: "80%",
+    marginTop: "5%",
+    borderRadius: 30,
+    borderWidth: 2,
+    borderTopColor: "#e6e6e6",
+    borderRightColor: "#ababab",
+    alignSelf: "center",
+  },
   containerone: {
-    backgroundColor: "#4f0a05",
+    backgroundColor: "transparent",
 
     height: "47%",
 
@@ -76,22 +105,25 @@ const styles = StyleSheet.create({
   },
   Main: {
     flex: 1,
-    backgroundColor: "#4f0a05",
   },
   buttonText: {
-    fontSize: 17,
-    color: "black",
+    fontSize: 20,
+    alignSelf: "center",
+    color: "white",
+    paddingVertical: 15,
     letterSpacing: 1.1,
     textShadowColor: "rgba(0, 0, 0, 0.2)",
     textShadowOffset: { width: 0.5, height: 0.5 },
     textShadowRadius: 1,
   },
   buttonTexttwo: {
-    fontSize: 17,
+    fontSize: 20,
+    alignSelf: "center",
     color: "white",
+    paddingVertical: 15,
     letterSpacing: 1.1,
-    textShadowColor: "rgba(0, 0, 0, 0.75)",
-    textShadowOffset: { width: 2, height: 2 },
+    textShadowColor: "rgba(0, 0, 0, 0.2)",
+    textShadowOffset: { width: 0.5, height: 0.5 },
     textShadowRadius: 1,
   },
 
@@ -133,7 +165,11 @@ const styles = StyleSheet.create({
     height: "50%",
     bottom: "10%",
     borderRadius: 30,
-    backgroundColor: "white",
+    backgroundColor: "rgba(255, 255, 255, 0.65)",
+    blurRadius: 2,
+    borderWidth: 2,
+    borderTopColor: "#e6e6e6",
+    borderRightColor: "#ababab",
   },
   logo: {
     resizeMode: "cover",
@@ -142,19 +178,20 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   logoContainer: {
-    backgroundColor: "#4f0a05",
+    backgroundColor: "transparent",
     borderRadius: 1000,
     width: "40%",
     height: "25%",
+
     alignSelf: "center",
     justifyContent: "center",
   },
   logoTitle: {
     alignSelf: "center",
-    fontSize: 30,
-    color: "white",
-    textShadowColor: "rgba(0, 0, 0, 0.75)",
+    fontSize: 32,
+    textShadowColor: "rgba(0, 0, 0, 0.9)",
     textShadowOffset: { width: 2, height: 2 },
     textShadowRadius: 5,
+    color: "white",
   },
 });

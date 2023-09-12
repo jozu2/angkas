@@ -7,7 +7,7 @@ import { useDispatch } from "react-redux";
 import { useBackHandler } from "@react-native-community/hooks";
 
 import { db } from "../../../config";
-import { ref, onValue } from "firebase/database";
+import { ref, onValue, get } from "firebase/database";
 import { useState, useEffect } from "react";
 import { setHomeDestination, setUserId } from "../../redux/navSlice";
 
@@ -40,33 +40,44 @@ const DriverScanUserGoingSchool = () => {
   //   }, [])
   // );
   useEffect(() => {
+    console.log("heyyy");
     const dbRef = ref(db, "Request_To_School");
-    onValue(dbRef, (snapshot) => {
-      const data = snapshot.val();
-      const requests = Object.keys(data).map((key) => ({
-        id: key,
-        ...data[key],
-      }));
+    get(dbRef)
+      .then((snapshot) => {
+        const data = snapshot.val();
+        const requests = Object.keys(data).map((key) => ({
+          id: key,
+          ...data[key],
+        }));
 
-      // Filter requests where isAccepted is false
-      const filteredRequests = requests.filter(
-        (request) => request.isAccepted === false
-      );
+        // Filter requests where isBeingReviewed is false and isAccepted is false
+        const filteredRequests = requests.filter(
+          (request) => !request.isBeingReviewed && !request.isAccepted
+        );
 
-      if (filteredRequests.length > 0) {
-        // Randomly select one of the filtered requests
-        const randomIndex = Math.floor(Math.random() * filteredRequests.length);
-        const randomRequest = filteredRequests[randomIndex];
+        if (filteredRequests.length > 0) {
+          // Randomly select one of the filtered requests
+          const randomIndex = Math.floor(
+            Math.random() * filteredRequests.length
+          );
+          const randomRequest = filteredRequests[randomIndex];
 
-        setRequestDataToSchool(randomRequest);
-        dispatch(setHomeDestination(randomRequest));
-        setIsDataFetched(true);
-        setIsLoading(false);
-      }
-    });
+          setRequestDataToSchool(randomRequest);
+          setIsDataFetched(true);
+          setIsLoading(false);
+        } else {
+          setIsDataFetched(false);
+          setIsLoading(true);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
   }, []);
 
-  console.log(requestToSchoolData);
+  if (requestToSchoolData !== null) {
+    dispatch(setHomeDestination(requestToSchoolData));
+  }
   function backActionHandler() {
     Alert.alert("", "Are you sure you want to Cancel?", [
       {

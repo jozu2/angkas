@@ -9,7 +9,7 @@ export default [
 
     description: "Head to School",
     uri: "UserGotoScoolMap",
-    colors: ["#ffffff", "#c3d9f7", "#488ef0"],
+    colors: ["#56CCF2", "#2F80ED"],
   },
   {
     id: 2,
@@ -21,6 +21,6 @@ export default [
     // img4: require("../assets/bgHome4.png"),
     description: "Return home",
     uri: "UserGotoHomeMap",
-    colors: ["#ffffff", "#e1eec3", "#e35f36"],
+    colors: ["#FF4B2B", "#FF416C"],
   },
 ];
