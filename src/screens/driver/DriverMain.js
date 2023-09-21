@@ -35,7 +35,6 @@ const DriverMain = () => {
     })();
   }, []);
   useEffect(() => {
-    // Move the dispatch inside a useEffect to avoid the error
     dispatch(setDriverLocation(location));
   }, [location, dispatch]);
   return (

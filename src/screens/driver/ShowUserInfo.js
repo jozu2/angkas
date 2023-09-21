@@ -1,6 +1,8 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, Image } from "react-native";
 import React, { useRef } from "react";
 import { useSelector } from "react-redux";
+import CustomMarkerImage from "../../assets/car.png";
+import CustomMarkerUser from "../../assets/user.png";
 import {
   selectDriverLocation,
   selectHomeDestination,
@@ -9,7 +11,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "react-native-vector-icons/Entypo";
 
 import MapViewDirections from "react-native-maps-directions";
-import MapView, { Marker } from "react-native-maps";
+import MapView, { Marker, Callout } from "react-native-maps";
 import { GOOGLE_MAPS_APIKEY } from "@env";
 import { Pressable } from "react-native";
 import { useEffect } from "react";
@@ -24,12 +26,12 @@ const ShowUserInfo = () => {
   const mapRef = useRef(null);
   const navigation = useNavigation();
 
-  const handleAceept = async () => {
+  const handleAcept = async () => {
     try {
       // Reference to the student's isAccepted field
       const studentIsBeingViewedRef = ref(
         db,
-        `Request_To_School/${StudentDetails.id}/isBeingViewed`
+        `Request_To_School/${StudentDetails.id}/isAccepted`
       );
 
       // Get the current value of isAccepted
@@ -46,7 +48,7 @@ const ShowUserInfo = () => {
         await set(studentIsBeingViewedRef, true);
 
         // Navigate to the next screen
-        navigation.navigate("DriverScanUserGoingSchool");
+        navigation.navigate("DriverUser");
       }
     } catch (error) {
       console.error("Error updating isAccepted:", error);
@@ -59,9 +61,17 @@ const ShowUserInfo = () => {
   const { onReject } = route.params || {}; // Retrieve the callback from route params
 
   const handleReject = () => {
-    navigation.navigate("DriverScanUserGoingSchool", {
-      onReject: () => {},
-    });
+    const updateIsbeingViewedToFalse = ref(
+      db,
+      `Request_To_School/${StudentDetails.id}`
+    );
+    update(updateIsbeingViewedToFalse, { isBeingReviewed: false })
+      .then(() => {
+        navigation.replace("DriverScanUserGoingSchool");
+      })
+      .catch((error) => {
+        console.error("Error updating value in the database:", error);
+      });
   };
   useEffect(() => {
     if (onReject) {
@@ -69,6 +79,8 @@ const ShowUserInfo = () => {
       onReject();
     }
   }, [route]);
+
+  const anchor = { x: 0.1, y: 0.2 };
   return (
     <SafeAreaView style={styles.ContainerMain}>
       <View style={{ position: "absolute", top: "7%", width: "100%" }}>
@@ -104,7 +116,6 @@ const ShowUserInfo = () => {
 
       <MapView
         ref={mapRef}
-        showsMyLocationButton={true}
         showsUserLocation={true}
         style={{
           width: "100%",
@@ -122,12 +133,12 @@ const ShowUserInfo = () => {
       >
         <MapViewDirections
           origin={{
-            latitude: StudentDetails.coordinates.latitude,
-            longitude: StudentDetails.coordinates.longitude,
-          }}
-          destination={{
             latitude: DriverDetails.coords.latitude,
             longitude: DriverDetails.coords.longitude,
+          }}
+          destination={{
+            latitude: StudentDetails.coordinates.latitude,
+            longitude: StudentDetails.coordinates.longitude,
           }}
           apikey={GOOGLE_MAPS_APIKEY}
           strokeWidth={4}
@@ -151,6 +162,7 @@ const ShowUserInfo = () => {
           }}
           title="You"
           identifier="origin"
+          image={CustomMarkerImage}
         ></Marker>
 
         <Marker
@@ -163,7 +175,13 @@ const ShowUserInfo = () => {
           description="User"
           identifier="destination"
           pinColor="green"
-        ></Marker>
+          anchor={anchor}
+        >
+          <Image
+            source={CustomMarkerUser}
+            style={{ width: 50, height: 50 }} // Adjust the size as needed
+          />
+        </Marker>
       </MapView>
       <View style={styles.UserProfilePicture}>
         <Text></Text>
@@ -210,7 +228,7 @@ const ShowUserInfo = () => {
               display: "flex",
               justifyContent: "center",
             }}
-            // onPress={handleAceept}
+            onPress={handleAcept}
           >
             <Text style={{ alignSelf: "center", fontSize: 18, color: "white" }}>
               ACCEPT

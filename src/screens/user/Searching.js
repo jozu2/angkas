@@ -1,21 +1,25 @@
 import { Alert, StyleSheet } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as Animatable from "react-native-animatable";
 import { useNavigation } from "@react-navigation/native";
 import { useBackHandler } from "@react-native-community/hooks";
-import { useDispatch } from "react-redux";
-import { setOrigin } from "../../redux/navSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { selectUserId, setOrigin } from "../../redux/navSlice";
+import { get, onValue, ref } from "firebase/database";
+import { useState } from "react";
+import { db } from "../../../config";
 
 const Searching = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-
+  const UserID = useSelector(selectUserId);
   //RESETS THE STORED ORIGIN LOCATION IF USER PRESS CANCEL
   const handleNavigateAndResetOrigin = () => {
     dispatch(setOrigin(null));
     navigation.navigate("UserGotoScoolMap");
   };
+
   function backActionHandler() {
     Alert.alert("", "Are you sure you want to Cancel?", [
       {
@@ -31,7 +35,33 @@ const Searching = () => {
     return true;
   }
   useBackHandler(backActionHandler);
-  /////////////////////////////////////////////////////////////
+  //////LOGIC///////////////////////////////////////////////////////
+
+  useEffect(() => {
+    const checkIfAcceptedRef = ref(
+      db,
+      `Request_To_School/${UserID}/isAccepted`
+    );
+
+    // Create a listener for changes in isAccepted
+    onValue(checkIfAcceptedRef, (snapshot) => {
+      const studentIsAccepted = snapshot.val();
+
+      if (studentIsAccepted) {
+        // Student is accepted, show an alert
+        navigation.navigate("UserWaitingToDriver");
+      } else {
+        // Student is not accepted
+        // You may choose to handle this case differently
+      }
+    });
+
+    // Cleanup the listener when the component unmounts
+    return () => {
+      // Detach the listener to avoid memory leaks
+      off(checkIfAcceptedRef);
+    };
+  }, []);
 
   return (
     <SafeAreaView style={styles.SearchContainer}>

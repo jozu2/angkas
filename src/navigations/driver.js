@@ -5,6 +5,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import DriverScanUserGoingSchool from "../screens/driver/DriverScanUserGoingSchool";
 import DriverScanUserGoingHome from "../screens/driver/DriverScanUserGoingHome";
 import ShowUserInfo from "../screens/driver/ShowUserInfo";
+import DriverUser from "../screens/driver/DriverUser";
 
 const Driver = () => {
   const Stack = createStackNavigator();
@@ -24,6 +25,7 @@ const Driver = () => {
         component={DriverScanUserGoingHome}
       />
       <Stack.Screen name="ShowUserInfo" component={ShowUserInfo} />
+      <Stack.Screen name="DriverUser" component={DriverUser} />
     </Stack.Navigator>
   );
 };

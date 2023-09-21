@@ -16,7 +16,7 @@ const StudentRegistration = () => {
   const [showErrorPass, setShowErrorPass] = useState(false);
 
   const validateEmail = (email) => {
-    if (email.endsWith("@gmail.com")) {
+    if (email.endsWith("@dhvsu.edu.ph")) {
       return true;
     } else {
       alert(

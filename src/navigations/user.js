@@ -9,6 +9,7 @@ import UserGotoScoolMap from "../screens/user/UserGotoScoolMap";
 import UserGotoHomeMap from "../screens/user/UserGotoHomeMap";
 import SearchinSchoolToHomeRide from "../screens/user/SearchinSchoolToHomeRide";
 import SideMenu from "./sideMenu";
+import UserWaitingToDriver from "../screens/user/UserWaitingToDriver";
 
 const UserNavigation = () => {
   const Stack = createStackNavigator();
@@ -19,6 +20,10 @@ const UserNavigation = () => {
 
       <Stack.Screen name="UserGotoScoolMap" component={UserGotoScoolMap} />
       <Stack.Screen name="UserGotoHomeMap" component={UserGotoHomeMap} />
+      <Stack.Screen
+        name="UserWaitingToDriver"
+        component={UserWaitingToDriver}
+      />
       <Stack.Screen
         name="Searching"
         component={Searching}

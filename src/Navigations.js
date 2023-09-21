@@ -4,7 +4,11 @@ import { useState } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import AuthNavigator from "./navigations/AuthNavigator";
-import { selectUserIsLoggedIn, setUserIsLoggedin } from "./redux/navSlice";
+import {
+  selectUserIsLoggedIn,
+  setUserId,
+  setUserIsLoggedin,
+} from "./redux/navSlice";
 import { useDispatch, useSelector } from "react-redux";
 import UserNavigation from "./navigations/user";
 import { useEffect } from "react";
@@ -56,7 +60,7 @@ const Navigations = () => {
         const userData = JSON.parse(user);
         const userUID = userData.uid;
 
-        console.log(userUID);
+        dispatch(setUserId(userUID));
         // You might want to set userLoggedIn status in Redux based on your needs.
         dispatch(setUserIsLoggedin("student"));
 
