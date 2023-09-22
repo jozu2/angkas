@@ -38,7 +38,7 @@ const DriverScanUserGoingSchool = () => {
         }));
 
         const filteredRequests = requests.filter((request) => {
-          return !request.isBeingReviewed && !request.isAccepted;
+          return !request.status.isBeingReviewed && !request.status.isAccepted;
         });
 
         if (filteredRequests.length > 0) {
@@ -59,6 +59,7 @@ const DriverScanUserGoingSchool = () => {
         } else {
           setIsDataFetched(false);
           setIsLoading(true);
+          dispatch(setHomeDestination(null));
         }
       } catch (error) {
         console.error("Error:", error);
@@ -75,15 +76,16 @@ const DriverScanUserGoingSchool = () => {
   }, [requestToSchoolData]);
   const handleNavigateAndResetOrigin = async () => {
     try {
-      const studentIsBeingViewedRef = ref(
-        db,
-        `Request_To_School/${getUserID.id}/status/isBeingReviewed`
-      );
+      if (getUserID !== null) {
+        const studentIsBeingViewedRef = ref(
+          db,
+          `Request_To_School/${getUserID.id}/status/isBeingReviewed`
+        );
 
-      // You can set the value and then wait for it if needed
-      await set(studentIsBeingViewedRef, false);
+        // You can set the value and then wait for it if needed
+        await set(studentIsBeingViewedRef, false);
+      }
 
-      console.log("this is text", getUserID.id);
       navigation.navigate("DriverMain");
       setIsDataFetched(false);
       setRequestDataToSchool(null);

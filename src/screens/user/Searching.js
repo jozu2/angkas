@@ -5,8 +5,12 @@ import * as Animatable from "react-native-animatable";
 import { useNavigation } from "@react-navigation/native";
 import { useBackHandler } from "@react-native-community/hooks";
 import { useDispatch, useSelector } from "react-redux";
-import { selectUserId, setOrigin } from "../../redux/navSlice";
-import { off, onValue, ref, remove } from "firebase/database";
+import {
+  selectUserId,
+  setDriverLocation,
+  setOrigin,
+} from "../../redux/navSlice";
+import { get, off, onValue, ref, remove } from "firebase/database";
 import { useState } from "react";
 import { db } from "../../../config";
 
@@ -65,6 +69,27 @@ const Searching = () => {
       // Detach the listener to avoid memory leaks
       off(checkIfAcceptedRef);
     };
+  }, []);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const dbRef = ref(db, `Request_To_School/${UserID}`);
+        const snapshot = await get(dbRef);
+        const requestData = snapshot.val();
+        console.log("Fetched data:", requestData); // Log the fetched data
+
+        if (requestData !== null) {
+          dispatch(setDriverLocation(requestData));
+        } else {
+          console.log("Specific item not found at the specified path.");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    }
+
+    fetchData();
   }, []);
 
   return (

@@ -3,11 +3,15 @@ import { useNavigation } from "@react-navigation/native";
 import tw from "twrnc";
 import React, { useState } from "react";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import * as Location from "expo-location";
 import { useEffect } from "react";
-import { setDriverLocation } from "../../redux/navSlice";
+import {
+  selectDriverLocation,
+  setDriverLocation,
+  setUserProfile,
+} from "../../redux/navSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const DriverMain = () => {
@@ -16,10 +20,17 @@ const DriverMain = () => {
   const [location, setLocation] = useState(null);
 
   const [isDisabled, setIsDisabled] = useState(true);
+  const DriverDetails = useSelector(selectDriverLocation);
 
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
+
+      const driverFirestore = await AsyncStorage.getItem("driverInfo");
+
+      const driverFirestoreData = JSON.parse(driverFirestore);
+      dispatch(setUserProfile(driverFirestoreData));
+
       if (status !== "granted") {
         console.log("Permission to access location was denied");
         setIsDisabled(true);
@@ -40,7 +51,11 @@ const DriverMain = () => {
   }, [location, dispatch]);
 
   const handleGotoScanUser = async () => {
-    navigation.navigate("DriverScanUserGoingSchool");
+    if (DriverDetails !== null) {
+      navigation.navigate("DriverScanUserGoingSchool");
+    } else {
+      return;
+    }
   };
   return (
     <>

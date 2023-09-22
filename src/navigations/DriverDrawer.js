@@ -20,6 +20,8 @@ const DriverDrawer = () => {
       dispatch(setUserIsLoggedin(""));
       await AsyncStorage.removeItem("driver");
       await AsyncStorage.removeItem("user");
+      await AsyncStorage.removeItem("driverInfo");
+
       navigation.navigate("HomeLogin");
     } catch (error) {
       console.error("Error logging out:", error);

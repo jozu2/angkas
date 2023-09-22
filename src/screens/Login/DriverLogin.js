@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { firebase } from "./../../../config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useDispatch } from "react-redux";
-import { setUserIsLoggedin } from "../../redux/navSlice";
+import { setUserIsLoggedin, setUserProfile } from "../../redux/navSlice";
 import * as Animatable from "react-native-animatable";
 import Entypo from "react-native-vector-icons/Entypo";
 const DriverLogin = () => {
@@ -44,24 +44,28 @@ const DriverLogin = () => {
           .doc(user.uid)
           .get();
         if (userDocs.exists) {
+          const userData = userDocs.data();
+          await AsyncStorage.setItem("driverInfo", JSON.stringify(userData));
+          const driverFirestore = await AsyncStorage.getItem("driverInfo");
+          const driverFirestoreData = JSON.parse(driverFirestore);
+          dispatch(setUserProfile(driverFirestoreData));
+
+          console.log(driverFirestoreData);
           dispatch(setUserIsLoggedin("driver"));
           await AsyncStorage.setItem("driver", JSON.stringify(user));
         } else {
           alert("Please log in your Driver Account");
         }
       } else {
-        // Email is not verified, display an error message
         firebase.auth().currentUser.sendEmailVerification({
           handleCodeInApp: true,
           url: "https://angkas-9b800.firebaseapp.com",
         });
-
         alert("Please verify your email before proceeding.");
         await firebase.auth().signOut();
-        // You can also sign out the user at this point if desired
-        // await firebase.auth().signOut();
       }
-    } catch {
+    } catch (error) {
+      console.error("Login error:", error);
       alert("Invalid Email/Password");
     }
   };

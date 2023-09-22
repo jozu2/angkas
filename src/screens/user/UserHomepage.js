@@ -16,11 +16,15 @@ import Slides from "../../data/index";
 import { useRef } from "react";
 import { useState } from "react";
 import { Animated } from "react-native";
+import { setUserProfile } from "../../redux/navSlice";
+import { useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useDispatch } from "react-redux";
 const UserHomepage = () => {
   const navigation = useNavigation();
   const [index, setIndex] = useState(0);
   const scrollX = useRef(new Animated.Value(0)).current;
-
+  const dispatch = useDispatch();
   const handleOnScroll = (event) => {
     Animated.event(
       [
@@ -46,6 +50,16 @@ const UserHomepage = () => {
   const viewabilityConfig = useRef({
     itemVisiblePercentThreshold: 50,
   }).current;
+
+  useEffect(() => {
+    (async () => {
+      const userFirestore = await AsyncStorage.getItem("userInfo");
+
+      const userFirestoreData = JSON.parse(userFirestore);
+      dispatch(setUserProfile(userFirestoreData));
+      console.log(userFirestoreData);
+    })();
+  }, []);
 
   return (
     // <>

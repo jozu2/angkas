@@ -44,7 +44,6 @@ const StudentLogin = () => {
       const user = userCredential.user;
 
       if (user.emailVerified) {
-        // Fetch the user's data from Firestore
         const userDoc = await firebase
           .firestore()
           .collection("users")
@@ -57,15 +56,12 @@ const StudentLogin = () => {
           const userFirestoreData = JSON.parse(userFirestore);
 
           dispatch(setUserProfile(userFirestoreData));
-          console.log(userFirestoreData);
           dispatch(setUserIsLoggedin("student"));
           await AsyncStorage.setItem("user", JSON.stringify(user));
         } else {
           alert("Please log in to your Student Account");
         }
-        // Email is verified, save user data and navigate to the dashboard
       } else {
-        // Email is not verified, display an error message
         firebase.auth().currentUser.sendEmailVerification({
           handleCodeInApp: true,
           url: "https://angkas-9b800.firebaseapp.com",
@@ -73,8 +69,6 @@ const StudentLogin = () => {
 
         alert("Please verify your email before proceeding.");
         await firebase.auth().signOut();
-        // You can also sign out the user at this point if desired
-        // await firebase.auth().signOut();
       }
     } catch (error) {
       console.log("Firebase Error:", error.message); // Log the error message

@@ -60,9 +60,7 @@ const UserGotoScoolMap = () => {
 
       if (user) {
         const userData = JSON.parse(user);
-
         const userUID = userData.uid;
-
         setUID(userUID);
         // You might want to set userLoggedIn status in Redux based on your needs.
         dispatch(setUserIsLoggedin("student"));
@@ -73,6 +71,7 @@ const UserGotoScoolMap = () => {
       console.error("Error checking user authentication:", error);
     }
   };
+  console.log(userProfile);
 
   const RequestGoToSchool = () => {
     set(ref(db, "Request_To_School/" + UID), {

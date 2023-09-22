@@ -6,6 +6,7 @@ import CustomMarkerUser from "../../assets/user.png";
 import {
   selectDriverLocation,
   selectHomeDestination,
+  selectUserProfile,
 } from "../../redux/navSlice";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "react-native-vector-icons/Entypo";
@@ -25,10 +26,29 @@ const ShowUserInfo = () => {
   const DriverDetails = useSelector(selectDriverLocation);
   const mapRef = useRef(null);
   const navigation = useNavigation();
-  console.log(StudentDetails);
+  const DriverData = useSelector(selectUserProfile);
+  console.log(DriverData);
+
   const handleAcept = async () => {
     try {
       // Reference to the student's isAccepted field
+
+      set(ref(db, `Request_To_School/${StudentDetails.id}/driver`), {
+        coordinates: {
+          latitude: DriverDetails.coords.latitude,
+          longitude: DriverDetails.coords.longitude,
+        },
+        info: {
+          firstName: DriverData.firstName,
+          lastName: DriverData.lastName,
+          email: DriverData.contact,
+          driverId: DriverData.studentId,
+        },
+        status: {
+          isOnTheWay: true,
+        },
+      });
+
       const studentIsBeingViewedRef = ref(
         db,
         `Request_To_School/${StudentDetails.id}/status/isAccepted`

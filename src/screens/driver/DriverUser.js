@@ -5,7 +5,7 @@ const DriverUser = () => {
   return (
     <View>
       <Text style={{ fontSize: 25, marginTop: 255, alignSelf: "center" }}>
-        On your way to user
+        Waiting for User to Confirm
       </Text>
     </View>
   );
