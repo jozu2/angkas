@@ -27,7 +27,6 @@ const StudentLogin = () => {
   const checkUserAuthentication = async () => {
     try {
       const user = await AsyncStorage.getItem("user");
-      const userInfo = await AsyncStorage.getItem("userInfo");
 
       if (user) {
         // User is already authenticated, navigate to the dashboard
@@ -54,7 +53,11 @@ const StudentLogin = () => {
         if (userDoc.exists) {
           const userData = userDoc.data();
           await AsyncStorage.setItem("userInfo", JSON.stringify(userData));
+          const userFirestore = await AsyncStorage.getItem("userInfo");
+          const userFirestoreData = JSON.parse(userFirestore);
 
+          dispatch(setUserProfile(userFirestoreData));
+          console.log(userFirestoreData);
           dispatch(setUserIsLoggedin("student"));
           await AsyncStorage.setItem("user", JSON.stringify(user));
         } else {

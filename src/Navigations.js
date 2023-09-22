@@ -35,11 +35,7 @@ const Navigations = () => {
     try {
       const user = await AsyncStorage.getItem("user");
       const driver = await AsyncStorage.getItem("driver");
-      const userFirestore = await AsyncStorage.getItem("userInfo");
 
-      const userFirestoreData = JSON.parse(userFirestore);
-
-      dispatch(setUserProfile(userFirestoreData));
       if (user) {
         dispatch(setUserIsLoggedin("student"));
         setTimeout(() => {
