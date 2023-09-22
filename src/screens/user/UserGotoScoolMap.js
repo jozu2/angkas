@@ -11,8 +11,10 @@ import { GOOGLE_MAPS_APIKEY } from "@env";
 import {
   selectOrigin,
   selectUserId,
+  selectUserProfile,
   setOrigin,
   setUserIsLoggedin,
+  setUserProfile,
 } from "../../redux/navSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
@@ -22,7 +24,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import tw from "twrnc";
 import MapViewDirections from "react-native-maps-directions";
 import Geocoder from "react-native-geocoding";
-import { ref, set } from "firebase/database";
+import { ref, set, remove } from "firebase/database";
 import { db } from "./../../../config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -30,7 +32,7 @@ const UserGotoScoolMap = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   Geocoder.init(GOOGLE_MAPS_APIKEY);
-
+  const userInfo = useSelector(selectUserProfile);
   //Resets the states in this component after pressing "ASK FOR A RIDE"
   const resetOriginDescriptionModalNavigate = () => {
     setTimeout(() => {
@@ -44,7 +46,9 @@ const UserGotoScoolMap = () => {
   };
 
   const origin = useSelector(selectOrigin);
+  const userProfile = useSelector(selectUserProfile);
   ////////////////////////////////////////////////////////
+
   const [UID, setUID] = useState(useSelector(selectUserId));
   useEffect(() => {
     checkForUID();
@@ -56,6 +60,7 @@ const UserGotoScoolMap = () => {
 
       if (user) {
         const userData = JSON.parse(user);
+
         const userUID = userData.uid;
 
         setUID(userUID);
@@ -76,8 +81,15 @@ const UserGotoScoolMap = () => {
         longitude: origin.location.longitude,
         location: origin.description,
       },
-      isAccepted: false,
-      isBeingReviewed: false,
+      StudentInfo: {
+        firstName: userProfile.firstName,
+        lastName: userProfile.lastName,
+        studentId: userProfile.studentId,
+      },
+      status: {
+        isAccepted: false,
+        isBeingReviewed: false,
+      },
     });
     resetOriginDescriptionModalNavigate();
     navigation.navigate("Searching");

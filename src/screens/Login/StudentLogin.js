@@ -3,7 +3,11 @@ import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { firebase } from "./../../../config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { selectUserIsLoggedIn, setUserIsLoggedin } from "../../redux/navSlice";
+import {
+  selectUserIsLoggedIn,
+  setUserIsLoggedin,
+  setUserProfile,
+} from "../../redux/navSlice";
 import { useDispatch, useSelector } from "react-redux";
 import * as Animatable from "react-native-animatable";
 import Entypo from "react-native-vector-icons/Entypo";
@@ -23,6 +27,8 @@ const StudentLogin = () => {
   const checkUserAuthentication = async () => {
     try {
       const user = await AsyncStorage.getItem("user");
+      const userInfo = await AsyncStorage.getItem("userInfo");
+
       if (user) {
         // User is already authenticated, navigate to the dashboard
         navigation.navigate("drawer");
@@ -46,6 +52,9 @@ const StudentLogin = () => {
           .doc(user.uid)
           .get();
         if (userDoc.exists) {
+          const userData = userDoc.data();
+          await AsyncStorage.setItem("userInfo", JSON.stringify(userData));
+
           dispatch(setUserIsLoggedin("student"));
           await AsyncStorage.setItem("user", JSON.stringify(user));
         } else {

@@ -25,13 +25,13 @@ const ShowUserInfo = () => {
   const DriverDetails = useSelector(selectDriverLocation);
   const mapRef = useRef(null);
   const navigation = useNavigation();
-
+  console.log(StudentDetails);
   const handleAcept = async () => {
     try {
       // Reference to the student's isAccepted field
       const studentIsBeingViewedRef = ref(
         db,
-        `Request_To_School/${StudentDetails.id}/isAccepted`
+        `Request_To_School/${StudentDetails.id}/status/isAccepted`
       );
 
       // Get the current value of isAccepted
@@ -63,7 +63,7 @@ const ShowUserInfo = () => {
   const handleReject = () => {
     const updateIsbeingViewedToFalse = ref(
       db,
-      `Request_To_School/${StudentDetails.id}`
+      `Request_To_School/${StudentDetails.id}/status`
     );
     update(updateIsbeingViewedToFalse, { isBeingReviewed: false })
       .then(() => {
@@ -119,7 +119,7 @@ const ShowUserInfo = () => {
         showsUserLocation={true}
         style={{
           width: "100%",
-          height: "55%",
+          height: "62%",
           zIndex: 1,
           marginTop: "35%",
           borderBottomLeftRadius: 22,
@@ -148,7 +148,7 @@ const ShowUserInfo = () => {
           onReady={(result) => {
             if (mapRef.current) {
               mapRef.current.fitToCoordinates(result.coordinates, {
-                edgePadding: { top: 40, right: 40, bottom: 40, left: 40 },
+                edgePadding: { top: 110, right: 50, bottom: 110, left: 50 },
               });
             }
           }}
@@ -171,8 +171,6 @@ const ShowUserInfo = () => {
             latitude: StudentDetails.coordinates.latitude,
             longitude: StudentDetails.coordinates.longitude,
           }}
-          title="3 MIN"
-          description="User"
           identifier="destination"
           pinColor="green"
           anchor={anchor}
@@ -189,7 +187,10 @@ const ShowUserInfo = () => {
       <View style={styles.UserContainer}>
         <View style={{ position: "absolute", bottom: "18%", width: "100%" }}>
           <Text style={{ color: "black", fontSize: 30, alignSelf: "center" }}>
-            Joshua Melendres
+            {`${StudentDetails.StudentInfo.firstName} ${StudentDetails.StudentInfo.lastName}`}
+          </Text>
+          <Text style={{ fontSize: 15, alignSelf: "center", color: "gray" }}>
+            {`${StudentDetails.StudentInfo.studentId}`}
           </Text>
         </View>
       </View>
@@ -209,7 +210,7 @@ const ShowUserInfo = () => {
           <Pressable
             style={{
               flex: 1,
-              backgroundColor: "#597E72",
+              backgroundColor: "#e65555",
               display: "flex",
               justifyContent: "center",
             }}
@@ -224,7 +225,7 @@ const ShowUserInfo = () => {
           <Pressable
             style={{
               flex: 1,
-              backgroundColor: "#95D3BF",
+              backgroundColor: "#ffc647",
               display: "flex",
               justifyContent: "center",
             }}
@@ -244,7 +245,7 @@ export default ShowUserInfo;
 
 const styles = StyleSheet.create({
   ContainerMain: {
-    backgroundColor: "#49967E",
+    backgroundColor: "#ffc647",
     height: "100%",
     width: "100%",
   },
@@ -275,17 +276,17 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    height: "20%",
+    height: "15%",
     position: "absolute",
     bottom: "9%",
     zIndex: 9,
   },
   UserProfilePicture: {
-    width: "36%",
-    height: "18%",
+    width: "30%",
+    height: "15%",
     position: "absolute",
     zIndex: 10,
-    bottom: "20%",
+    bottom: "19%",
     alignSelf: "center",
     backgroundColor: "#46665C",
     borderRadius: 2000,

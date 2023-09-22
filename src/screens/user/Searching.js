@@ -6,7 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useBackHandler } from "@react-native-community/hooks";
 import { useDispatch, useSelector } from "react-redux";
 import { selectUserId, setOrigin } from "../../redux/navSlice";
-import { get, onValue, ref } from "firebase/database";
+import { off, onValue, ref, remove } from "firebase/database";
 import { useState } from "react";
 import { db } from "../../../config";
 
@@ -14,8 +14,12 @@ const Searching = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const UserID = useSelector(selectUserId);
+  const [UID, setUID] = useState(useSelector(selectUserId));
+
   //RESETS THE STORED ORIGIN LOCATION IF USER PRESS CANCEL
   const handleNavigateAndResetOrigin = () => {
+    const dbRefCancel = ref(db, "Request_To_School/" + UID);
+    remove(dbRefCancel);
     dispatch(setOrigin(null));
     navigation.navigate("UserGotoScoolMap");
   };
@@ -40,7 +44,7 @@ const Searching = () => {
   useEffect(() => {
     const checkIfAcceptedRef = ref(
       db,
-      `Request_To_School/${UserID}/isAccepted`
+      `Request_To_School/${UserID}/status/isAccepted`
     );
 
     // Create a listener for changes in isAccepted

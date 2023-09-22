@@ -41,6 +41,11 @@ export const navSlice = createSlice({
       state.userId = action.payload;
     },
 
+    //User.Profile
+    setUserProfile: (state, action) => {
+      state.userProfile = action.payload;
+    },
+
     //DriverLocation
     setDriverLocation: (state, action) => {
       state.driverLocation = action.payload;
@@ -57,6 +62,7 @@ export const {
   setUserIsLoggedin,
   setIsLoading,
   setUserId,
+  setUserProfile,
   setDriverLocation,
 } = navSlice.actions;
 
@@ -75,6 +81,7 @@ export const selectUserIsLoggedIn = (state) => state.nav.userIsLoggedIn;
 export const selectIsLoading = (state) => state.nav.isLoading;
 
 export const selectUserId = (state) => state.nav.userId;
+export const selectUserProfile = (state) => state.nav.userProfile;
 
 export const selectDriverLocation = (state) => state.nav.driverLocation;
 

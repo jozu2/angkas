@@ -8,6 +8,7 @@ import { useDispatch } from "react-redux";
 import * as Location from "expo-location";
 import { useEffect } from "react";
 import { setDriverLocation } from "../../redux/navSlice";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const DriverMain = () => {
   const navigation = useNavigation();
@@ -37,6 +38,10 @@ const DriverMain = () => {
   useEffect(() => {
     dispatch(setDriverLocation(location));
   }, [location, dispatch]);
+
+  const handleGotoScanUser = async () => {
+    navigation.navigate("DriverScanUserGoingSchool");
+  };
   return (
     <>
       <View style={[tw`h-1/2 pt-10`, { backgroundColor: "violet" }]}>
@@ -58,9 +63,7 @@ const DriverMain = () => {
             borderRadius: 10,
           }}
           disabled={isDisabled}
-          onPress={() => {
-            navigation.navigate("DriverScanUserGoingSchool");
-          }}
+          onPress={handleGotoScanUser}
         >
           <Text style={{ alignSelf: "center", fontSize: 18 }}>
             Scan Users Going School

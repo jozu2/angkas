@@ -19,6 +19,7 @@ const SideMenu = () => {
       dispatch(setUserIsLoggedin(""));
       await AsyncStorage.removeItem("drivers");
       await AsyncStorage.removeItem("user");
+      await AsyncStorage.removeItem("userInfo");
 
       navigation.navigate("HomeLogin"); // Change to the appropriate login screen
     } catch (error) {

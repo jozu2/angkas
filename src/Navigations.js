@@ -8,6 +8,7 @@ import {
   selectUserIsLoggedIn,
   setUserId,
   setUserIsLoggedin,
+  setUserProfile,
 } from "./redux/navSlice";
 import { useDispatch, useSelector } from "react-redux";
 import UserNavigation from "./navigations/user";
@@ -34,6 +35,11 @@ const Navigations = () => {
     try {
       const user = await AsyncStorage.getItem("user");
       const driver = await AsyncStorage.getItem("driver");
+      const userFirestore = await AsyncStorage.getItem("userInfo");
+
+      const userFirestoreData = JSON.parse(userFirestore);
+
+      dispatch(setUserProfile(userFirestoreData));
       if (user) {
         dispatch(setUserIsLoggedin("student"));
         setTimeout(() => {

@@ -9,10 +9,11 @@ import { GOOGLE_MAPS_APIKEY } from "@env";
 import AsyncStorage from "@react-native-async-storage/async-storage"; // Import AsyncStorage
 
 import { db } from "../../../config";
-import { ref, onValue, get, update } from "firebase/database";
+import { ref, onValue, get, update, set } from "firebase/database";
 import { useState, useEffect } from "react";
 import {
   selectDriverLocation,
+  selectHomeDestination,
   setHomeDestination,
   setUserId,
 } from "../../redux/navSlice";
@@ -20,7 +21,7 @@ import {
 const DriverScanUserGoingSchool = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-
+  const getUserID = useSelector(selectHomeDestination);
   const [requestToSchoolData, setRequestDataToSchool] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isDataFetched, setIsDataFetched] = useState(false);
@@ -28,11 +29,6 @@ const DriverScanUserGoingSchool = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const data = await AsyncStorage.getItem("fetchedRequestIds");
-        if (data) {
-          setFetchedRequestIds(JSON.parse(data));
-        }
-
         const dbRef = ref(db, "Request_To_School");
         const snapshot = await get(dbRef);
         const requestData = snapshot.val();
@@ -42,11 +38,7 @@ const DriverScanUserGoingSchool = () => {
         }));
 
         const filteredRequests = requests.filter((request) => {
-          return (
-            !request.isBeingReviewed &&
-            !request.isAccepted &&
-            !fetchedRequestIds.includes(request.id)
-          );
+          return !request.isBeingReviewed && !request.isAccepted;
         });
 
         if (filteredRequests.length > 0) {
@@ -55,17 +47,11 @@ const DriverScanUserGoingSchool = () => {
           );
           const randomRequest = filteredRequests[randomIndex];
 
-          const updatedFetchedRequestIds = [
-            ...fetchedRequestIds,
-            randomRequest.id,
-          ];
-
-          await AsyncStorage.setItem(
-            "fetchedRequestIds",
-            JSON.stringify(updatedFetchedRequestIds)
+          const studentIsBeingViewedRef = ref(
+            db,
+            `Request_To_School/${randomRequest.id}/status/isBeingReviewed`
           );
-
-          setFetchedRequestIds(updatedFetchedRequestIds);
+          await set(studentIsBeingViewedRef, true);
 
           setRequestDataToSchool(randomRequest);
           setIsDataFetched(true);
@@ -81,10 +67,31 @@ const DriverScanUserGoingSchool = () => {
 
     fetchData();
   }, []);
-  console.log(fetchedRequestIds);
-  if (requestToSchoolData !== null) {
-    dispatch(setHomeDestination(requestToSchoolData));
-  }
+
+  useEffect(() => {
+    if (requestToSchoolData !== null) {
+      dispatch(setHomeDestination(requestToSchoolData));
+    }
+  }, [requestToSchoolData]);
+  const handleNavigateAndResetOrigin = async () => {
+    try {
+      const studentIsBeingViewedRef = ref(
+        db,
+        `Request_To_School/${getUserID.id}/status/isBeingReviewed`
+      );
+
+      // You can set the value and then wait for it if needed
+      await set(studentIsBeingViewedRef, false);
+
+      console.log("this is text", getUserID.id);
+      navigation.navigate("DriverMain");
+      setIsDataFetched(false);
+      setRequestDataToSchool(null);
+      setIsLoading(true);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
   function backActionHandler() {
     Alert.alert("", "Are you sure you want to Cancel?", [
       {
@@ -101,13 +108,6 @@ const DriverScanUserGoingSchool = () => {
   }
 
   useBackHandler(backActionHandler);
-
-  const handleNavigateAndResetOrigin = () => {
-    navigation.navigate("DriverMain");
-    setIsDataFetched(false);
-    setRequestDataToSchool(null);
-    setIsLoading(true);
-  };
 
   if (isLoading) {
     return (
