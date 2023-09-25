@@ -57,7 +57,7 @@ const HomeLogin = () => {
               style={[styles.buttonBlue]}
               onPress={() => navigation.navigate("StudentLogin")}
             >
-              <Text style={styles.buttonText}>STTUDENT</Text>
+              <Text style={styles.buttonText}>COMMUTER</Text>
             </Pressable>
           </LinearGradient>
 

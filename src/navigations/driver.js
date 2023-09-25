@@ -6,6 +6,7 @@ import DriverScanUserGoingSchool from "../screens/driver/DriverScanUserGoingScho
 import DriverScanUserGoingHome from "../screens/driver/DriverScanUserGoingHome";
 import ShowUserInfo from "../screens/driver/ShowUserInfo";
 import DriverUser from "../screens/driver/DriverUser";
+import DriverOTWtoUserSchool from "../screens/driver/DriverOTWtoUserSchool";
 
 const Driver = () => {
   const Stack = createStackNavigator();
@@ -23,6 +24,10 @@ const Driver = () => {
       <Stack.Screen
         name="DriverScanUserGoingHome"
         component={DriverScanUserGoingHome}
+      />
+      <Stack.Screen
+        name="DriverOTWtoUserSchool"
+        component={DriverOTWtoUserSchool}
       />
       <Stack.Screen name="ShowUserInfo" component={ShowUserInfo} />
       <Stack.Screen name="DriverUser" component={DriverUser} />

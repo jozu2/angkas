@@ -25,13 +25,22 @@ const DriverScanUserGoingSchool = () => {
   const [requestToSchoolData, setRequestDataToSchool] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isDataFetched, setIsDataFetched] = useState(false);
-  const [fetchedRequestIds, setFetchedRequestIds] = useState([]);
+  const [fetchedRequestIds, setFetchedRequestIds] = useState("sampleID");
+
   useEffect(() => {
     async function fetchData() {
       try {
         const dbRef = ref(db, "Request_To_School");
         const snapshot = await get(dbRef);
         const requestData = snapshot.val();
+
+        if (!requestData || Object.keys(requestData).length === 0) {
+          setIsDataFetched(false);
+          setIsLoading(true);
+          dispatch(setHomeDestination(null));
+          return;
+        }
+
         const requests = Object.keys(requestData).map((key) => ({
           id: key,
           ...requestData[key],
@@ -41,12 +50,17 @@ const DriverScanUserGoingSchool = () => {
           return !request.status.isBeingReviewed && !request.status.isAccepted;
         });
 
+        if (!filteredRequests) {
+          return;
+        }
+
         if (filteredRequests.length > 0) {
           const randomIndex = Math.floor(
             Math.random() * filteredRequests.length
           );
           const randomRequest = filteredRequests[randomIndex];
 
+          setFetchedRequestIds(randomRequest.id);
           const studentIsBeingViewedRef = ref(
             db,
             `Request_To_School/${randomRequest.id}/status/isBeingReviewed`

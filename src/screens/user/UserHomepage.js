@@ -43,7 +43,6 @@ const UserHomepage = () => {
   };
 
   const handleOnViewableItemsChanged = useRef(({ viewableItems }) => {
-    // console.log('viewableItems', viewableItems);
     setIndex(viewableItems[0].index);
   }).current;
 
@@ -57,7 +56,6 @@ const UserHomepage = () => {
 
       const userFirestoreData = JSON.parse(userFirestore);
       dispatch(setUserProfile(userFirestoreData));
-      console.log(userFirestoreData);
     })();
   }, []);
 

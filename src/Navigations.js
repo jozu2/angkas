@@ -63,20 +63,19 @@ const Navigations = () => {
         const userUID = userData.uid;
 
         dispatch(setUserId(userUID));
-        // You might want to set userLoggedIn status in Redux based on your needs.
+
         dispatch(setUserIsLoggedin("student"));
 
         setTimeout(() => {
-          setIsLoading(false); // Set loading to false after 2 seconds
-        }, 2000); // 2000 milliseconds (2 seconds)
+          setIsLoading(false);
+        }, 2000);
       } else if (driver) {
-        // Handle the driver case in a similar manner if needed.
       } else {
-        setIsLoading(false); // No user or driver data found, set loading to false.
+        setIsLoading(false);
       }
     } catch (error) {
       console.error("Error checking user authentication:", error);
-      setIsLoading(false); // Handle errors by setting loading to false.
+      setIsLoading(false);
     }
   };
 

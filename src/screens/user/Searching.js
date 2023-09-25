@@ -10,7 +10,7 @@ import {
   setDriverLocation,
   setOrigin,
 } from "../../redux/navSlice";
-import { get, off, onValue, ref, remove } from "firebase/database";
+import { get, off, onValue, ref, remove, set, update } from "firebase/database";
 import { useState } from "react";
 import { db } from "../../../config";
 
@@ -23,11 +23,13 @@ const Searching = () => {
   //RESETS THE STORED ORIGIN LOCATION IF USER PRESS CANCEL
   const handleNavigateAndResetOrigin = () => {
     const dbRefCancel = ref(db, "Request_To_School/" + UID);
-    remove(dbRefCancel);
+
+    if (dbRefCancel) {
+      remove(dbRefCancel);
+    }
     dispatch(setOrigin(null));
     navigation.navigate("UserGotoScoolMap");
   };
-
   function backActionHandler() {
     Alert.alert("", "Are you sure you want to Cancel?", [
       {
@@ -51,45 +53,33 @@ const Searching = () => {
       `Request_To_School/${UserID}/status/isAccepted`
     );
 
-    // Create a listener for changes in isAccepted
     onValue(checkIfAcceptedRef, (snapshot) => {
       const studentIsAccepted = snapshot.val();
-
       if (studentIsAccepted) {
-        // Student is accepted, show an alert
         navigation.navigate("UserWaitingToDriver");
       } else {
-        // Student is not accepted
-        // You may choose to handle this case differently
       }
     });
 
-    // Cleanup the listener when the component unmounts
     return () => {
-      // Detach the listener to avoid memory leaks
       off(checkIfAcceptedRef);
     };
   }, []);
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const dbRef = ref(db, `Request_To_School/${UserID}`);
-        const snapshot = await get(dbRef);
-        const requestData = snapshot.val();
-        console.log("Fetched data:", requestData); // Log the fetched data
+    const isDeclinedToFalse = async () => {
+      const updateIsDeclinedtoFalseRef = ref(
+        db,
+        `Request_To_School/${UserID}/status/isDeclined`
+      );
+      const snapshotDeclined = await get(updateIsDeclinedtoFalseRef);
+      const currentIsDeclined = snapshotDeclined.val();
 
-        if (requestData !== null) {
-          dispatch(setDriverLocation(requestData));
-        } else {
-          console.log("Specific item not found at the specified path.");
-        }
-      } catch (error) {
-        console.error("Error:", error);
+      if (currentIsDeclined) {
+        await set(updateIsDeclinedtoFalseRef, false);
       }
-    }
-
-    fetchData();
+    };
+    isDeclinedToFalse();
   }, []);
 
   return (

@@ -19,7 +19,8 @@ import { useEffect } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 
 import { db } from "../../../config";
-import { ref, onValue, set, update, get } from "firebase/database";
+import { ref, onValue, set, update, get, off } from "firebase/database";
+import { useState } from "react";
 
 const ShowUserInfo = () => {
   const StudentDetails = useSelector(selectHomeDestination);
@@ -27,54 +28,72 @@ const ShowUserInfo = () => {
   const mapRef = useRef(null);
   const navigation = useNavigation();
   const DriverData = useSelector(selectUserProfile);
-  console.log(DriverData);
+  const [isDeleted, setIsDeleted] = useState(false);
+
+  useEffect(() => {
+    const checkIfAcceptedRef = ref(
+      db,
+      `Request_To_School/${StudentDetails?.id}`
+    );
+
+    onValue(checkIfAcceptedRef, (snapshot) => {
+      const studentIsAccepted = snapshot.val();
+      if (studentIsAccepted === null) {
+        setIsDeleted(true);
+      } else {
+        setIsDeleted(false);
+      }
+    });
+  }, []);
 
   const handleAcept = async () => {
     try {
       // Reference to the student's isAccepted field
 
-      set(ref(db, `Request_To_School/${StudentDetails.id}/driver`), {
-        coordinates: {
-          latitude: DriverDetails.coords.latitude,
-          longitude: DriverDetails.coords.longitude,
-        },
-        info: {
-          firstName: DriverData.firstName,
-          lastName: DriverData.lastName,
-          email: DriverData.contact,
-          driverId: DriverData.studentId,
-        },
-        status: {
-          isOnTheWay: true,
-        },
-      });
+      if (!isDeleted) {
+        set(ref(db, `Request_To_School/${StudentDetails.id}/driver`), {
+          coordinates: {
+            latitude: DriverDetails.coords.latitude,
+            longitude: DriverDetails.coords.longitude,
+          },
+          info: {
+            firstName: DriverData.firstName,
+            lastName: DriverData.lastName,
+            email: DriverData.contact,
+            driverId: DriverData.studentId,
+          },
+          status: {
+            isOnTheWay: true,
+          },
+        });
 
-      const studentIsBeingViewedRef = ref(
-        db,
-        `Request_To_School/${StudentDetails.id}/status/isAccepted`
-      );
+        const studentIsBeingViewedRef = ref(
+          db,
+          `Request_To_School/${StudentDetails.id}/status/isAccepted`
+        );
 
-      // Get the current value of isAccepted
-      const snapshot = await get(studentIsBeingViewedRef);
-      const currentIsAccepted = snapshot.val();
+        // Get the current value of isAccepted
+        const snapshot = await get(studentIsBeingViewedRef);
+        const currentIsAccepted = snapshot.val();
 
-      // Check if the student is already accepted
-      if (currentIsAccepted) {
-        // Student is already accepted, show an alert
-        alert("This user is already accepted by others.");
-        navigation.navigate("DriverScanUserGoingSchool");
+        // Check if the student is already accepted
+        if (currentIsAccepted) {
+          // Student is already accepted, show an alert
+          alert("This user is already accepted by others.");
+          navigation.navigate("DriverScanUserGoingSchool");
+        } else {
+          // Student is not accepted, set isAccepted to true
+          await set(studentIsBeingViewedRef, true);
+
+          // Navigate to the next screen
+          navigation.navigate("DriverUser");
+        }
       } else {
-        // Student is not accepted, set isAccepted to true
-        await set(studentIsBeingViewedRef, true);
-
-        // Navigate to the next screen
-        navigation.navigate("DriverUser");
+        console.log("error in showUser UseeFFECT");
       }
     } catch (error) {
       console.error("Error updating isAccepted:", error);
     }
-
-    console.log("hey");
   };
   const route = useRoute();
 
@@ -101,164 +120,179 @@ const ShowUserInfo = () => {
   }, [route]);
 
   const anchor = { x: 0.1, y: 0.2 };
-  return (
-    <SafeAreaView style={styles.ContainerMain}>
-      <View style={{ position: "absolute", top: "7%", width: "100%" }}>
-        <Text style={{ color: "white", fontSize: 30, alignSelf: "center" }}>
-          User Detected
-        </Text>
-      </View>
-      <View style={styles.InputBox}>
-        <View>
-          <Text style={styles.InputBox.PickupDROP}>
-            <Text>
-              <Ionicons name="address" size={15} color="#36A71A" />
-            </Text>
-            <Text> ----- PICKUP FROM</Text>
-          </Text>
-          <Text style={styles.InputBox.Text}>
-            {StudentDetails.coordinates.location}
+
+  if (!isDeleted) {
+    return (
+      <SafeAreaView style={styles.ContainerMain}>
+        <View style={{ position: "absolute", top: "7%", width: "100%" }}>
+          <Text style={{ color: "white", fontSize: 30, alignSelf: "center" }}>
+            User Detected
           </Text>
         </View>
-        <View>
-          <Text style={styles.InputBox.PickupDROP}>
-            <Text>
-              <Ionicons name="forward" color="#C70039" size={15} />
+        <View style={styles.InputBox}>
+          <View>
+            <Text style={styles.InputBox.PickupDROP}>
+              <Text>
+                <Ionicons name="address" size={15} color="#36A71A" />
+              </Text>
+              <Text> ----- PICKUP FROM</Text>
             </Text>
+            <Text style={styles.InputBox.Text}>
+              {StudentDetails.coordinates.location}
+            </Text>
+          </View>
+          <View>
+            <Text style={styles.InputBox.PickupDROP}>
+              <Text>
+                <Ionicons name="forward" color="#C70039" size={15} />
+              </Text>
 
-            <Text> ----- DROP OFF</Text>
-          </Text>
-          <Text style={[styles.InputBox.Text, { paddingBottom: 12 }]}>
-            Don Honorio Ventura School, Bacolor
-          </Text>
+              <Text> ----- DROP OFF</Text>
+            </Text>
+            <Text style={[styles.InputBox.Text, { paddingBottom: 12 }]}>
+              Don Honorio Ventura School, Bacolor
+            </Text>
+          </View>
         </View>
-      </View>
 
-      <MapView
-        ref={mapRef}
-        showsUserLocation={true}
-        style={{
-          width: "100%",
-          height: "62%",
-          zIndex: 1,
-          marginTop: "35%",
-          borderBottomLeftRadius: 22,
-        }}
-        region={{
-          latitude: StudentDetails.coordinates.latitude,
-          longitude: StudentDetails.coordinates.longitude,
-          latitudeDelta: 0.045,
-          longitudeDelta: 0.045,
-        }}
-      >
-        <MapViewDirections
-          origin={{
-            latitude: DriverDetails.coords.latitude,
-            longitude: DriverDetails.coords.longitude,
+        <MapView
+          ref={mapRef}
+          showsUserLocation={true}
+          style={{
+            width: "100%",
+            height: "62%",
+            zIndex: 1,
+            marginTop: "35%",
+            borderBottomLeftRadius: 22,
           }}
-          destination={{
+          region={{
             latitude: StudentDetails.coordinates.latitude,
             longitude: StudentDetails.coordinates.longitude,
+            latitudeDelta: 0.045,
+            longitudeDelta: 0.045,
           }}
-          apikey={GOOGLE_MAPS_APIKEY}
-          strokeWidth={4}
-          identifier="destination"
-          strokeColor="green"
-          optimizeWaypoints={true}
-          onReady={(result) => {
-            if (mapRef.current) {
-              mapRef.current.fitToCoordinates(result.coordinates, {
-                edgePadding: { top: 110, right: 50, bottom: 110, left: 50 },
-              });
-            }
-          }}
-        />
-
-        <Marker
-          style={{ width: 200, height: 200 }}
-          coordinate={{
-            latitude: DriverDetails.coords.latitude,
-            longitude: DriverDetails.coords.longitude,
-          }}
-          title="You"
-          identifier="origin"
-          image={CustomMarkerImage}
-        ></Marker>
-
-        <Marker
-          style={{ width: 200, height: 200 }}
-          coordinate={{
-            latitude: StudentDetails.coordinates.latitude,
-            longitude: StudentDetails.coordinates.longitude,
-          }}
-          identifier="destination"
-          pinColor="green"
-          anchor={anchor}
         >
-          <Image
-            source={CustomMarkerUser}
-            style={{ width: 50, height: 50 }} // Adjust the size as needed
+          <MapViewDirections
+            origin={{
+              latitude: DriverDetails.coords.latitude,
+              longitude: DriverDetails.coords.longitude,
+            }}
+            destination={{
+              latitude: StudentDetails.coordinates.latitude,
+              longitude: StudentDetails.coordinates.longitude,
+            }}
+            apikey={GOOGLE_MAPS_APIKEY}
+            strokeWidth={4}
+            identifier="destination"
+            strokeColor="green"
+            optimizeWaypoints={true}
+            onReady={(result) => {
+              if (mapRef.current) {
+                mapRef.current.fitToCoordinates(result.coordinates, {
+                  edgePadding: { top: 110, right: 50, bottom: 110, left: 50 },
+                });
+              }
+            }}
           />
-        </Marker>
-      </MapView>
-      <View style={styles.UserProfilePicture}>
-        <Text></Text>
-      </View>
-      <View style={styles.UserContainer}>
-        <View style={{ position: "absolute", bottom: "18%", width: "100%" }}>
-          <Text style={{ color: "black", fontSize: 30, alignSelf: "center" }}>
-            {`${StudentDetails.StudentInfo.firstName} ${StudentDetails.StudentInfo.lastName}`}
-          </Text>
-          <Text style={{ fontSize: 15, alignSelf: "center", color: "gray" }}>
-            {`${StudentDetails.StudentInfo.studentId}`}
-          </Text>
-        </View>
-      </View>
 
-      <View
-        style={{
-          width: "100%",
-          height: "9%",
-          backgroundColor: "blue",
-          position: "absolute",
-          zIndex: 11,
-          bottom: 0,
-          flexDirection: "row", // Set flexDirection to 'row'
-        }}
-      >
-        <View style={{ flex: 1 }}>
-          <Pressable
-            style={{
-              flex: 1,
-              backgroundColor: "#e65555",
-              display: "flex",
-              justifyContent: "center",
+          <Marker
+            style={{ width: 200, height: 200 }}
+            coordinate={{
+              latitude: DriverDetails.coords.latitude,
+              longitude: DriverDetails.coords.longitude,
             }}
-            onPress={handleReject}
-          >
-            <Text style={{ alignSelf: "center", fontSize: 18, color: "white" }}>
-              REJECT
-            </Text>
-          </Pressable>
-        </View>
-        <View style={{ flex: 1 }}>
-          <Pressable
-            style={{
-              flex: 1,
-              backgroundColor: "#ffc647",
-              display: "flex",
-              justifyContent: "center",
+            title="You"
+            identifier="origin"
+            image={CustomMarkerImage}
+          ></Marker>
+
+          <Marker
+            style={{ width: 200, height: 200 }}
+            coordinate={{
+              latitude: StudentDetails.coordinates.latitude,
+              longitude: StudentDetails.coordinates.longitude,
             }}
-            onPress={handleAcept}
+            identifier="destination"
+            pinColor="green"
+            anchor={anchor}
           >
-            <Text style={{ alignSelf: "center", fontSize: 18, color: "white" }}>
-              ACCEPT
-            </Text>
-          </Pressable>
+            <Image
+              source={CustomMarkerUser}
+              style={{ width: 50, height: 50 }} // Adjust the size as needed
+            />
+          </Marker>
+        </MapView>
+        <View style={styles.UserProfilePicture}>
+          <Text></Text>
         </View>
-      </View>
-    </SafeAreaView>
-  );
+        <View style={styles.UserContainer}>
+          <View style={{ position: "absolute", bottom: "18%", width: "100%" }}>
+            <Text style={{ color: "black", fontSize: 30, alignSelf: "center" }}>
+              {`${StudentDetails.StudentInfo.firstName} ${StudentDetails.StudentInfo.lastName}`}
+            </Text>
+            <Text style={{ fontSize: 15, alignSelf: "center", color: "gray" }}>
+              {`${StudentDetails.StudentInfo.studentId}`}
+            </Text>
+          </View>
+        </View>
+
+        <View
+          style={{
+            width: "100%",
+            height: "9%",
+            backgroundColor: "blue",
+            position: "absolute",
+            zIndex: 11,
+            bottom: 0,
+            flexDirection: "row", // Set flexDirection to 'row'
+          }}
+        >
+          <View style={{ flex: 1 }}>
+            <Pressable
+              style={{
+                flex: 1,
+                backgroundColor: "#e65555",
+                display: "flex",
+                justifyContent: "center",
+              }}
+              onPress={handleReject}
+            >
+              <Text
+                style={{ alignSelf: "center", fontSize: 18, color: "white" }}
+              >
+                REJECT
+              </Text>
+            </Pressable>
+          </View>
+          <View style={{ flex: 1 }}>
+            <Pressable
+              style={{
+                flex: 1,
+                backgroundColor: "#ffc647",
+                display: "flex",
+                justifyContent: "center",
+              }}
+              onPress={handleAcept}
+            >
+              <Text
+                style={{ alignSelf: "center", fontSize: 18, color: "white" }}
+              >
+                ACCEPT
+              </Text>
+            </Pressable>
+          </View>
+        </View>
+      </SafeAreaView>
+    );
+  } else {
+    return (
+      <SafeAreaView>
+        <View>
+          <Text>loading</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 };
 
 export default ShowUserInfo;

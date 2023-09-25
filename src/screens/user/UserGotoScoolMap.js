@@ -71,7 +71,6 @@ const UserGotoScoolMap = () => {
       console.error("Error checking user authentication:", error);
     }
   };
-  console.log(userProfile);
 
   const RequestGoToSchool = () => {
     set(ref(db, "Request_To_School/" + UID), {
@@ -88,6 +87,8 @@ const UserGotoScoolMap = () => {
       status: {
         isAccepted: false,
         isBeingReviewed: false,
+        isConfirmed: false,
+        isDeclined: false,
       },
     });
     resetOriginDescriptionModalNavigate();
