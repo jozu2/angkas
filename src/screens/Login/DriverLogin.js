@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: "#fbb009",
+    backgroundColor: "black",
   },
   title1: {
     alignSelf: "flex-start",
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
   button: {
     width: "80%",
     marginTop: "10%",
-    backgroundColor: "#ffc647",
+    backgroundColor: "black",
     borderRadius: 30,
     alignSelf: "center",
     borderWidth: 1.5,
@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
   },
 
   containerone: {
-    backgroundColor: "#fbb009",
+    backgroundColor: "black",
     height: "47%",
     justifyContent: "center",
   },
@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
   signUpText: {
     fontWeight: "bold",
     fontSize: 17,
-    color: "#fbb009",
+    color: "black",
     textShadowColor: "rgba(0, 0, 0, 0.5)",
     textShadowOffset: { width: 0.5, height: 0.5 },
     textShadowRadius: 0.5,
@@ -251,11 +251,11 @@ const styles = StyleSheet.create({
   inputemail: {
     marginLeft: "10%",
     marginTop: "15%",
-    color: "#cc910e",
+    color: "black",
   },
   inputpassword: {
     marginLeft: "10%",
     marginTop: "5%",
-    color: "#cc910e",
+    color: "black",
   },
 });

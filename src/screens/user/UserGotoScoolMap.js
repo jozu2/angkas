@@ -17,16 +17,19 @@ import {
   setUserProfile,
 } from "../../redux/navSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigation } from "@react-navigation/native";
+import { DrawerActions, useNavigation } from "@react-navigation/native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { useBackHandler } from "@react-native-community/hooks";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import tw from "twrnc";
 import MapViewDirections from "react-native-maps-directions";
 import Geocoder from "react-native-geocoding";
 import { ref, set, remove } from "firebase/database";
 import { db } from "./../../../config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Animatable from "react-native-animatable";
 
 const UserGotoScoolMap = () => {
   const dispatch = useDispatch();
@@ -132,50 +135,73 @@ const UserGotoScoolMap = () => {
   }
   useBackHandler(backActionHandler);
 
+  const handleOpenDrawer = () => {
+    navigation.dispatch(DrawerActions.openDrawer());
+  };
   return (
     <>
       {/* Google auto complete Input field */}
       <View style={styles.apContainer}>
         {showDirection.boxModalConfirm === false && (
-          <GooglePlacesAutocomplete
-            renderRightButton={() =>
-              googlePlaceAutoCompleteRef.current?.getAddressText() ? (
-                <TouchableOpacity
-                  style={styles.clearButton}
-                  onPress={() => {
-                    googlePlaceAutoCompleteRef.current?.setAddressText("");
-                  }}
-                >
-                  <Ionicons
-                    name={"close-outline"}
-                    color={"black"}
-                    size={35}
-                    style={{ paddingLeft: "3%" }}
-                  />
-                </TouchableOpacity>
-              ) : null
-            }
-            ref={googlePlaceAutoCompleteRef}
-            styles={styles.googleAutoStyle}
-            query={{
-              key: GOOGLE_MAPS_APIKEY,
-              language: "en",
+          <View
+            style={{
+              backgroundColor: "#242424",
+              zIndex: 2000,
+              paddingTop: 40,
+              height: 180,
             }}
-            placeholder="Where From?"
-            nearbyPlacesAPI="GooglePlacesSearch"
-            debounce={400}
-            minLength={2}
-            enablePoweredByContainer={false}
-            onPress={(data, details = null) => {
-              setOriginCoord({
-                latitude: details.geometry.location.lat,
-                longitude: details.geometry.location.lng,
-              });
-              setOriginDescription({ description: data.description });
-            }}
-            fetchDetails={true}
-            returnKeyType={"search"}
-          />
+          >
+            <Text
+              style={{
+                color: "#fff",
+                paddingLeft: 30,
+                fontSize: 28,
+                marginTop: 20,
+                fontWeight: "600",
+              }}
+            >
+              Where Are You?
+            </Text>
+            <GooglePlacesAutocomplete
+              renderRightButton={() =>
+                googlePlaceAutoCompleteRef.current?.getAddressText() ? (
+                  <TouchableOpacity
+                    style={styles.clearButton}
+                    onPress={() => {
+                      googlePlaceAutoCompleteRef.current?.setAddressText("");
+                    }}
+                  >
+                    <Ionicons
+                      name={"close-outline"}
+                      color={"#fff"}
+                      size={35}
+                      style={{ paddingLeft: "3%" }}
+                    />
+                  </TouchableOpacity>
+                ) : null
+              }
+              ref={googlePlaceAutoCompleteRef}
+              styles={styles.googleAutoStyle}
+              query={{
+                key: GOOGLE_MAPS_APIKEY,
+                language: "en",
+              }}
+              placeholder="Input your location"
+              nearbyPlacesAPI="GooglePlacesSearch"
+              debounce={400}
+              minLength={2}
+              enablePoweredByContainer={false}
+              onPress={(data, details = null) => {
+                setOriginCoord({
+                  latitude: details.geometry.location.lat,
+                  longitude: details.geometry.location.lng,
+                });
+                setOriginDescription({ description: data.description });
+              }}
+              fetchDetails={true}
+              returnKeyType={"search"}
+            />
+          </View>
         )}
       </View>
 
@@ -267,6 +293,52 @@ const UserGotoScoolMap = () => {
         ></Marker>
       </MapView>
 
+      <View>
+        {showDirection.boxModalConfirm === false && (
+          <View
+            style={{
+              position: "absolute",
+              height: 85,
+
+              backgroundColor: "#242424",
+              zIndex: 30,
+              width: "100%",
+              bottom: 0,
+              // borderTopLeftRadius: 15,
+              // borderTopRightRadius: 15,
+            }}
+          >
+            <View
+              style={{
+                height: 80,
+                width: 80,
+                backgroundColor: "#ebebeb",
+                alignSelf: "center",
+                borderRadius: 500,
+                borderWidth: 2,
+                borderColor: "black",
+                top: -40,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <MaterialIcons
+                name="my-location"
+                size={49}
+                color="black"
+                style={{}}
+              />
+            </View>
+            <MaterialIcons
+              name="home-filled"
+              size={35}
+              color="white"
+              style={{ position: "absolute", left: 40, top: 20 }}
+            />
+          </View>
+        )}
+      </View>
       {/* // CHECK ICON, this will show after placing your origin marker ////*/}
       {originDescription.description !== "" &&
         showDirection.check === false && (
@@ -282,12 +354,24 @@ const UserGotoScoolMap = () => {
               setShowDirection({ check: true, boxModalConfirm: true });
             }}
           >
-            <Ionicons
-              name="md-checkmark-circle"
-              size={32}
-              color="orange"
-              style={styles.iconCheck}
-            />
+            <Animatable.View
+              animation="fadeIn"
+              iterationCount="infinite"
+              direction="alternate"
+              duration={1000}
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
+              <Ionicons
+                name="arrow-redo-sharp"
+                size={22}
+                color="#fff"
+                style={styles.iconCheck}
+              />
+            </Animatable.View>
           </Pressable>
         )}
 
@@ -296,9 +380,8 @@ const UserGotoScoolMap = () => {
         <View style={styles.modalContainerOriginTODes}>
           <View
             style={[
-              tw`rounded-xl `,
               {
-                backgroundColor: "#ecc94b",
+                backgroundColor: "white",
                 paddingTop: 35,
                 paddingBottom: 30,
                 paddingLeft: 20,
@@ -307,26 +390,56 @@ const UserGotoScoolMap = () => {
             ]}
           >
             <View style={styles.ModalText}>
-              <View>
-                <Text style={{ fontSize: 11, color: "#1a202c" }}>
-                  PICKUP FROM:
-                </Text>
-              </View>
-              <View>
-                <Text style={{ fontSize: 16, color: "#1a202c" }}>
-                  {originDescription.description}
-                </Text>
+              <View
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
+                <MaterialIcons name="pin-drop" size={35} color={"#282828"} />
+                <View style={{ paddingLeft: 10 }}>
+                  <Text
+                    style={{
+                      fontSize: 11,
+                      color: "#1a202c",
+                      fontWeight: "600",
+                    }}
+                  >
+                    PICKUP FROM:
+                  </Text>
+
+                  <Text style={{ fontSize: 16, color: "#1a202c" }}>
+                    {originDescription.description}
+                  </Text>
+                </View>
               </View>
 
-              <View style={{ marginTop: 13 }}>
-                <Text style={{ fontSize: 11, color: "#1a202c" }}>
-                  DROP OFF:
-                </Text>
-              </View>
-              <View>
-                <Text style={{ fontSize: 16, color: "#1a202c" }}>
-                  {schoolDestination.description}
-                </Text>
+              <View
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginTop: 10,
+                }}
+              >
+                <FontAwesome5 name="school" size={26} color={"#282828"} />
+
+                <View style={{ paddingLeft: 10, paddingVertical: 15 }}>
+                  <Text
+                    style={{
+                      fontSize: 11,
+                      color: "#1a202c",
+                      fontWeight: "600",
+                    }}
+                  >
+                    DROP OFF:
+                  </Text>
+
+                  <Text style={{ fontSize: 16, color: "#1a202c" }}>
+                    {schoolDestination.description}
+                  </Text>
+                </View>
               </View>
             </View>
 
@@ -337,14 +450,16 @@ const UserGotoScoolMap = () => {
                 tw`rounded-xl`,
                 {
                   paddingVertical: 11,
-                  backgroundColor: "white",
+                  backgroundColor: "#242424",
                   marginTop: 20,
                 },
               ]}
               onPress={RequestGoToSchool}
             >
-              <Text style={{ textAlign: "center", fontSize: 20 }}>
-                Ask For a Ride
+              <Text
+                style={{ textAlign: "center", fontSize: 20, color: "#fff" }}
+              >
+                ASK FOR A RIDE
               </Text>
             </Pressable>
           </View>
@@ -360,24 +475,29 @@ const styles = StyleSheet.create({
     position: "absolute",
     width: 200,
     alignSelf: "center",
-    bottom: "5%",
-    width: "95%",
+    bottom: "0%",
+    borderWidth: 2,
+    borderColor: "black",
+    width: "100%",
   },
   apContainer: {
     position: "absolute",
     width: "100%",
-    top: "10%",
+    alignSelf: "center",
+    top: 0,
   },
   container: {
     height: "100%",
   },
   checkContainer: {
     position: "absolute",
-    alignSelf: "center",
-    bottom: "10%",
+    bottom: 20,
+    right: 30,
+    zIndex: 200,
   },
   iconCheck: {
-    fontSize: 80,
+    fontSize: 50,
+    paddingLeft: 10,
   },
   BookContainer: {
     position: "absolute",
@@ -391,11 +511,12 @@ const styles = StyleSheet.create({
   googleAutoStyle: {
     container: {
       left: "5%",
-      top: "15%",
+      top: "65%",
       position: "absolute",
       zIndex: 100,
       flex: 0,
       width: "90%",
+      paddingVertical: 20,
     },
     textInput: {
       width: 200,
@@ -410,6 +531,7 @@ const styles = StyleSheet.create({
   },
 
   ModalText: {
-    marginLeft: "8%",
+    marginLeft: "2%",
+    paddingRight: 30,
   },
 });

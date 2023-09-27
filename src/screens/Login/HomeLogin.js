@@ -3,13 +3,14 @@ import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import * as Animatable from "react-native-animatable";
 import { LinearGradient } from "expo-linear-gradient";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const HomeLogin = () => {
   const navigation = useNavigation();
 
   return (
     <LinearGradient
-      colors={["#2F80ED", "#2F80ED", "#FF4B2B", "#FF416C"]}
+      colors={["black", "black", "gray", "#fff"]}
       style={styles.Main}
     >
       <View style={styles.containerone}>
@@ -49,21 +50,18 @@ const HomeLogin = () => {
         >
           <Text style={styles.h1}>Login As</Text>
 
-          <LinearGradient
-            style={[styles.buttonBlueContainer]}
-            colors={["#FF4B2B", "#FF416C"]}
-          >
+          <View style={[styles.buttonBlueContainer]}>
             <Pressable
               style={[styles.buttonBlue]}
               onPress={() => navigation.navigate("StudentLogin")}
             >
               <Text style={styles.buttonText}>COMMUTER</Text>
             </Pressable>
-          </LinearGradient>
+          </View>
 
           <LinearGradient
+            colors={["#404040", "black", "black"]}
             style={[styles.buttonBlueContainerTwo]}
-            colors={["#56CCF2", "#2F80ED"]}
           >
             <Pressable onPress={() => navigation.navigate("DriverLogin")}>
               <Text style={styles.buttonTexttwo}>DRIVER</Text>
@@ -85,9 +83,11 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderTopColor: "#e6e6e6",
     borderRightColor: "#ababab",
+    backgroundColor: "black",
     alignSelf: "center",
   },
   buttonBlueContainer: {
+    backgroundColor: "white",
     width: "80%",
     marginTop: "5%",
     borderRadius: 30,
@@ -105,11 +105,13 @@ const styles = StyleSheet.create({
   },
   Main: {
     flex: 1,
+    backgroundColor: "black",
   },
   buttonText: {
+    color: "black",
+
     fontSize: 20,
     alignSelf: "center",
-    color: "white",
     paddingVertical: 15,
     letterSpacing: 1.1,
     textShadowColor: "rgba(0, 0, 0, 0.2)",
@@ -165,7 +167,7 @@ const styles = StyleSheet.create({
     height: "50%",
     bottom: "10%",
     borderRadius: 30,
-    backgroundColor: "rgba(255, 255, 255, 0.65)",
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
     blurRadius: 2,
     borderWidth: 2,
     borderTopColor: "#e6e6e6",

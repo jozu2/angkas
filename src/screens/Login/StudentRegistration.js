@@ -244,7 +244,7 @@ const StudentRegistration = () => {
         duration={2000}
         iterationCount={1}
       >
-        <Text style={styles.title2}>Rider Registration</Text>
+        <Text style={styles.title2}>Commuter Registration</Text>
         <Text style={styles.title1}>Sign Up</Text>
       </Animatable.View>
       <Animatable.View
@@ -283,12 +283,12 @@ const styles = StyleSheet.create({
   },
   signin: {
     textDecorationLine: "underline",
-    color: "#fbb009",
+    color: "white",
   },
   container: {
     width: "100%",
     height: "100%",
-    backgroundColor: "#b03013",
+    backgroundColor: "black",
   },
   hiddenInput: {
     width: 0,
@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     borderWidth: 1.5,
     borderColor: "gray",
-    backgroundColor: "#f25c3a",
+    backgroundColor: "black",
     marginTop: 25,
   },
 
@@ -335,7 +335,7 @@ const styles = StyleSheet.create({
   textTitle: {
     paddingTop: 10,
     marginLeft: "10%",
-    color: "#b03013",
+    color: "black",
   },
   containerone: {
     width: "100%",

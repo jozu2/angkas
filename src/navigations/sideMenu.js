@@ -8,6 +8,7 @@ import UserSettings from "../screens/user/UserSettings";
 import CustomDrawer from "../screens/user/CustomDrawer";
 import Feather from "react-native-vector-icons/Feather";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import UserGotoScoolMap from "../screens/user/UserGotoScoolMap";
 
 const SideMenu = () => {
   const Drawer = createDrawerNavigator();
@@ -18,9 +19,9 @@ const SideMenu = () => {
         drawerContent={(props) => <CustomDrawer {...props} />}
         screenOptions={{
           headerShown: false,
-          drawerActiveBackgroundColor: "rgba(191, 65, 45, 0.1)",
-          drawerActiveTintColor: "#1c0000",
-          drawerInactiveTintColor: "#636363",
+          drawerActiveBackgroundColor: "rgba(0, 0, 0, 0.4)",
+          drawerActiveTintColor: "white",
+          drawerInactiveTintColor: "black",
           drawerLabelStyle: { marginLeft: -18 },
         }}
       >

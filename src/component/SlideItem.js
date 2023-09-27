@@ -7,6 +7,8 @@ import {
   Animated,
   Easing,
 } from "react-native";
+import Ionicons from "react-native-vector-icons/Ionicons";
+
 import React from "react";
 import { Pressable } from "react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -26,7 +28,6 @@ const SlideItem = ({ item }) => {
   const translateYImageplane = new Animated.Value(100);
 
   const navigation = useNavigation();
-
   Animated.timing(translateYImage, {
     toValue: 0,
     duration: 1000,
@@ -73,6 +74,14 @@ const SlideItem = ({ item }) => {
   }).start();
   return (
     <LinearGradient colors={item.colors} style={styles.container}>
+      <Ionicons
+        onPress={() => navigation.openDrawer()}
+        name="menu-outline"
+        size={52}
+        color="white"
+        style={[styles.hamburger, { color: item.textColor }]}
+      />
+
       <Animatable.View
         animation={"fadeIn"}
         duration={1900}
@@ -80,10 +89,18 @@ const SlideItem = ({ item }) => {
         style={styles.buttonTopMargin}
       >
         <Pressable
-          style={styles.buttonContainer}
+          style={[
+            styles.buttonContainer,
+            {
+              borderBottomColor: item.textColor,
+              borderLeftColor: item.textColor,
+            },
+          ]}
           onPress={() => navigation.navigate(item.uri)}
         >
-          <Text style={styles.description}>{item.description}</Text>
+          <Text style={[styles.description, { color: item.textColor }]}>
+            {item.description}
+          </Text>
         </Pressable>
       </Animatable.View>
 
@@ -271,7 +288,7 @@ const styles = StyleSheet.create({
     fontSize: 25,
     padding: 15,
     alignSelf: "center",
-    color: "#edeceb",
+
     paddingHorizontal: 40,
     zIndex: 100,
   },
@@ -286,5 +303,14 @@ const styles = StyleSheet.create({
   buttonTopMargin: {
     top: "42%",
     zIndex: 800,
+  },
+  hamburger: {
+    position: "absolute",
+    borderRadius: 10,
+    alignSelf: "center",
+    paddingHorizontal: 5,
+    left: "3%",
+    top: "8%",
+    zIndex: 1000,
   },
 });

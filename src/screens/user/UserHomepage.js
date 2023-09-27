@@ -9,7 +9,6 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import tw from "twrnc";
 import React from "react";
-import Ionicons from "react-native-vector-icons/Ionicons";
 import SlideItem from "../../component/SlideItem";
 import Pagination from "../../component/Pagination";
 import Slides from "../../data/index";
@@ -103,13 +102,6 @@ const UserHomepage = () => {
     //   </View>
     // </>
     <>
-      <Ionicons
-        onPress={() => navigation.openDrawer()}
-        name="menu-outline"
-        size={52}
-        color="white"
-        style={styles.hamburger}
-      />
       <View style={styles.container}>
         <FlatList
           data={Slides}
@@ -134,19 +126,13 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: "white",
   },
-  hamburger: {
-    position: "absolute",
-    left: "3%",
-    top: "8%",
-    zIndex: 1000,
-  },
+
   logo: {
     resizeMode: "contain",
     width: "100%",
     height: "100%",
   },
   buttonOne: {
-    backgroundColor: "rgba(225,225,225,0.8)",
     paddingHorizontal: 80,
     paddingVertical: 20,
     borderRadius: 30,

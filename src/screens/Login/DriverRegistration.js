@@ -218,12 +218,12 @@ const styles = StyleSheet.create({
   },
   signin: {
     textDecorationLine: "underline",
-    color: "#4f0a05",
+    color: "white",
   },
   container: {
     width: "100%",
     height: "100%",
-    backgroundColor: "#fbb009",
+    backgroundColor: "black",
   },
   hiddenInput: {
     width: 0,
@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     borderWidth: 1.5,
     borderColor: "gray",
-    backgroundColor: "#ffc647",
+    backgroundColor: "black",
     marginTop: 25,
   },
 
@@ -270,7 +270,7 @@ const styles = StyleSheet.create({
   textTitle: {
     paddingTop: 10,
     marginLeft: "10%",
-    color: "#cc910e",
+    color: "black",
   },
   containerone: {
     width: "100%",
